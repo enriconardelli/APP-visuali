@@ -1,0 +1,11 @@
+contiene una copia dei progetti della versione visuale della stazione meteo fatti nel 2016-17
+
+quella "visuale-base" l'avevo fatta io e sembra essere una versione molto preliminare che non funziona, 
+
+le altre sono copie di quelle degli studenti che lo avevano fatto nel 2016-17 e sembrano essere più avanzate.
+
+il progetto Ceccarelli-Benegiamo funziona (compila con le librerie vision NON void-safe e void_safety="none", se compilo con librerie vision void-safe e con void_safety="all" mi dà errori di variabili non inizializzate, se uso librerie vision NON void-safe e void_safety="all" o viceversa mi dà incompatibilità sul file di configurazione)
+
+Il progetto Damiani-vers-1 (in PROVA) funziona esattamente come Ceccarelli-Benegiamo, sembra che siano proprio fatti nello stesso modo 
+
+Il progetto Damiani-vers-2 (in PROVA) dà degli errori di compilazione per redefine non sistemate, ma sembra essere un'evoluzione della versione 1 di Damiani
