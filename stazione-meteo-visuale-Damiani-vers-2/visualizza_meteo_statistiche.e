@@ -10,11 +10,11 @@ class
 inherit
 
 	VIS_MEM_METEO
-		redefine
-			display_temperature,
-			display_humidity,
-			display_pressure
-		end
+--		redefine
+--			display_temperature,
+--			display_humidity,
+--			display_pressure
+--		end
 
 create
 	default_create
