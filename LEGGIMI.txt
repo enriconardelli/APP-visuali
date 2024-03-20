@@ -1,3 +1,7 @@
+creato progetto "stazione-meteo-visuale-2024" come copia del progetto Damiani-vers-2 dopo aver corretto gli errori di compilazioni, che diventa il progetto di lavoro per PSI-2024
+
+---
+
 contiene una copia dei progetti della versione visuale della stazione meteo fatti nel 2016-17
 
 quella "visuale-base" l'avevo fatta io e sembra essere una versione molto preliminare che non funziona, 
