@@ -1,5 +1,11 @@
 creato progetto "stazione-meteo-visuale-2024" come copia del progetto Damiani-vers-2 dopo aver corretto gli errori di compilazioni, che diventa il progetto di lavoro per PSI-2024
 
+Questo progetto ha una classe radice più "semplice" rispetto a quella creata di default da Eiffel Studio quando si crea un'app visuale, ma sostanzialmente equivalente. La root crea un'istanza di EV_APPLICATION e un'istanza di MAIN_WINDOW e le manda in esecuzione.
+
+Le classi applicative della stazione meteo di basso livello hanno la stessa struttura (Damiani-2 usava i nomi coerenti con la versione non grafica).
+
+In aggiunta, in questa versione c'è una superclasse comune a tutte le classi applicative, chiamata APPLICATION_WINDOW, anch'essa sottoclasse di EV_TITLED_WINDOW come la MAIN_WINDOW, che serve a mettere a fattor comune il codice che invece nelle altre versioni è replicato nelle sottoclassi di basso livello.
+
 ---
 
 contiene una copia dei progetti della versione visuale della stazione meteo fatti nel 2016-17
