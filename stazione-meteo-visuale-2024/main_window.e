@@ -100,6 +100,12 @@ feature {NONE} -- Implementation
 			statistiche.set_title ("Statistiche")
 			statistiche.show
 
+			create finestra_lista_dati
+			finestra_lista_dati.set_x_position (x_position + window_width + 450)
+			finestra_lista_dati.set_y_position (y_position + window_height - 300)
+			finestra_lista_dati.set_title ("Storico dati")
+			finestra_lista_dati.show
+
 				-- Allow screen refresh on some platforms
 			unlock_update
 		ensure
@@ -257,6 +263,8 @@ feature {NONE} -- Implementation / widgets
 
 	statistiche: VISUALIZZA_METEO_STATISTICHE
 			-- Application window 3
+
+	finestra_lista_dati: VISUALIZZA_METEO_STORICO
 
 	timer: EV_TIMEOUT
 			-- Timer per la pubblicazione di dati
