@@ -60,33 +60,44 @@ feature {NONE} -- Implementation
 			create enclosing_box
 			extend (enclosing_box)
 
-				-- Add 'start' and 'exit' button primitive
+				-- Add 'start' button primitive
 			create start_button.make_with_text ("Esegui misurazioni")
-			create reset_button.make_with_text ("Reset")
 			start_button.select_actions.extend (agent start_actions)
-			reset_button.select_actions.extend (agent reset_widgets)
 			enclosing_box.extend (start_button)
 			enclosing_box.set_item_x_position (start_button, 120)
 			enclosing_box.set_item_y_position (start_button, 115)
+
+				-- Add 'reset' button primitive
+			create reset_button.make_with_text ("Reset")
+			reset_button.select_actions.extend (agent reset_widgets)
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
 			enclosing_box.set_item_y_position (reset_button, 200)
-			create meteo_corrente
-			create previsioni_meteo
-			create statistiche
+
+
+				-- Set main window position
 			set_x_position (140)
 			set_y_position (40)
+
+				-- Set 'meteo_corrente' window
+			create meteo_corrente
 			meteo_corrente.set_x_position (x_position + window_width + 10)
 			meteo_corrente.set_y_position (y_position)
+			meteo_corrente.set_title ("Meteo corrente")
+			meteo_corrente.show
+
+				-- Set 'previsioni_meteo' window
+			create previsioni_meteo
 			previsioni_meteo.set_x_position (x_position)
 			previsioni_meteo.set_y_position (y_position + window_height + 25)
+			previsioni_meteo.set_title ("Previsioni meteo")
+			previsioni_meteo.show
+
+				-- Set 'statistiche' window
+			create statistiche
 			statistiche.set_x_position (x_position + window_width + 10)
 			statistiche.set_y_position (y_position + window_height + 25)
-			meteo_corrente.set_title ("Meteo corrente")
-			previsioni_meteo.set_title ("Previsioni meteo")
 			statistiche.set_title ("Statistiche")
-			meteo_corrente.show
-			previsioni_meteo.show
 			statistiche.show
 
 				-- Allow screen refresh on some platforms
@@ -100,34 +111,42 @@ feature {NONE} -- Implementation
 			statistiche_not_void: statistiche /= Void
 		end
 
+
 	start_actions
 			-- Start the appropriate actions.
 		local
 			info_dialog: EV_INFORMATION_DIALOG
+			timer: EV_TIMEOUT
 		do
+				-- Restore initial conditions
 			sensor_temperature.event.wipe_out
 			sensor_humidity.event.wipe_out
 			sensor_pressure.event.wipe_out
 			restore_all_subscription
+			Iteration_count := 0
+
 			create info_dialog.make_with_text ("Ora inizieranno le misurazioni. Premi 'Pause' per interrompere, 'Reset' per azzerare i contatori.")
 			info_dialog.show_modal_to_window (Current)
 
-				-- subscribe to temperature, humidity and pressure in meteo_corrente
+				-- Subscribe to temperature, humidity and pressure in meteo_corrente
 			sensor_temperature.event.subscribe (agent meteo_corrente.set_temperature(?))
 			sensor_humidity.event.subscribe (agent meteo_corrente.set_humidity(?))
 			sensor_pressure.event.subscribe (agent meteo_corrente.set_pressure(?))
 
-				-- subscribe to temperature, humidity and pressure in previsioni_meteo
+				-- Subscribe to temperature, humidity and pressure in previsioni_meteo
 			sensor_temperature.event.subscribe (agent previsioni_meteo.set_temperature(?))
 			sensor_humidity.event.subscribe (agent previsioni_meteo.set_humidity(?))
 			sensor_pressure.event.subscribe (agent previsioni_meteo.set_pressure(?))
 
-				-- subscribe to temperature, humidity and pressure in statistiche
+				-- Subscribe to temperature, humidity and pressure in statistiche
 			sensor_temperature.event.subscribe (agent statistiche.set_temperature(?))
 			sensor_humidity.event.subscribe (agent statistiche.set_humidity(?))
 			sensor_pressure.event.subscribe (agent statistiche.set_pressure(?))
-			change_values
+
+			create timer.make_with_interval (1000)
+			timer.actions.extend (agent change_value_once)
 		end
+
 
 	pause_actions
 			-- Stop the appropriate actions.
@@ -139,6 +158,7 @@ feature {NONE} -- Implementation
 			start_button.select_actions.extend (agent restore_all_subscription)
 		end
 
+
 	suspend_all_subscription
 		do
 			sensor_temperature.event.suspend_subscription
@@ -146,59 +166,38 @@ feature {NONE} -- Implementation
 			sensor_pressure.event.suspend_subscription
 		end
 
+
 	restore_all_subscription
 		do
 			sensor_temperature.event.restore_subscription
 			sensor_humidity.event.restore_subscription
 			sensor_pressure.event.restore_subscription
+
 			start_button.set_text ("Pause")
 			start_button.select_actions.go_i_th (1)
 			start_button.select_actions.remove
 			start_button.select_actions.extend (agent pause_actions)
+
 		end
 
-	change_values
-			-- Change values of `Sensor' object.
-		local
-			i: INTEGER
-			--	j: INTEGER
-			--	k: INTEGER
+
+	change_value_once
+			-- Change values of `Sensor' object once.
 		do
-			from
-				i := 0
-					--	j := 0
-					--	k := 0
-			until
-				i > 1000 or is_destroyed
-			loop
-				sensor_temperature.set_temperature (30 + i)
-				sensor_humidity.set_humidity (60 + 2 * i)
-				sensor_pressure.set_pressure (720 + 10 * i)
-				if sensor_temperature.event.is_suspended = false then
-					i := i + 1
-						--	j := j + 1
-						--	k := k + 1
-				end
-				Application.process_events
-				wait
+			sensor_temperature.set_temperature (Sensor_value_seed + Iteration_count )
+			sensor_humidity.set_humidity (Sensor_value_seed + Iteration_count)
+			sensor_pressure.set_pressure (720 + Sensor_value_seed + Iteration_count)
+
+			if sensor_temperature.event.is_suspended = false then
+				Iteration_count := Iteration_count + 1
 			end
+
+			Application.process_events
 		end
 
-	wait
-			-- Wait for `Iterations' before proceeding
-		local
-			i: INTEGER
-		do
-			from
-				i := 1
-			until
-				i = Iterations
-			loop
-				i := i + 1
-			end
-		end
 
-	reset_widgets -- Reset contents of all widgets.
+	reset_widgets
+			-- Reset contents of all widgets.
 		do
 			meteo_corrente.reset_widget
 			previsioni_meteo.reset_widget
@@ -209,6 +208,7 @@ feature {NONE} -- Implementation
 			start_button.select_actions.remove
 			start_button.select_actions.extend (agent start_actions)
 		end
+
 
 	destroy_application
 			-- Destroy the application.
@@ -318,8 +318,11 @@ feature {NONE} -- Implementation / Constants
 			sensor_pressure_created: Result /= Void
 		end
 
-	Iterations: INTEGER = 2000000
-			-- Iterations
+	Sensor_value_seed: INTEGER = 20
+			-- an initial value for sensor values
+
+	Iteration_count: INTEGER
+			-- keeps count of number of iterations
 
 	Window_title: STRING = "Event application: main window"
 			-- Title of the window

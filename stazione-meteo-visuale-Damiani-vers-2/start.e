@@ -13,17 +13,17 @@ create
 
 feature -- Initialization
 
-	make 
+	make
 			-- Create and launch the application.
 		local
 			application: EV_APPLICATION
 			main_window: MAIN_WINDOW
 		do
 			create application
-			default_create
 
 			create main_window
 			main_window.show
+			
 			application.launch
 		end
 
