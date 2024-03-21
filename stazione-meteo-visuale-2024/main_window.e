@@ -123,8 +123,15 @@ feature {NONE} -- Implementation
 			sensor_pressure.event.wipe_out
 			Iteration_count := 0
 
-			create info_dialog.make_with_text ("Ora inizieranno le misurazioni. Premi 'Pause' per interrompere, 'Reset' per azzerare i contatori.")
+			create info_dialog.make_with_text ("Ora inizieranno le misurazioni. Premi 'Pause' per interrompere, 'Reset' per azzerare i contatori, 'Step' per far avanzare le misurazioni di un passo.")
 			info_dialog.show_modal_to_window (Current)
+
+				-- Add 'step' button primitive
+			create step_button.make_with_text  ("Step")
+			step_button.select_actions.extend (agent change_value_once)
+			enclosing_box.extend (step_button)
+			enclosing_box.set_item_x_position (step_button, 153)
+			enclosing_box.set_item_y_position (step_button, 150)
 
 				-- Subscribe to temperature, humidity and pressure in meteo_corrente
 			sensor_temperature.event.subscribe (agent meteo_corrente.set_temperature(?))
@@ -186,6 +193,7 @@ feature {NONE} -- Implementation
 			start_button.select_actions.wipe_out
 			start_button.select_actions.extend (agent start_actions)
 			start_button.set_text ("Esegui misurazioni")
+			step_button.destroy
 		end
 
 
@@ -200,8 +208,6 @@ feature {NONE} -- Implementation
 
 			Application.process_events
 		end
-
-
 
 
 	destroy_application
@@ -239,6 +245,9 @@ feature {NONE} -- Implementation / widgets
 
 	reset_button: EV_BUTTON
 			-- Reset button
+
+	step_button: EV_BUTTON
+			-- Step button	
 
 	meteo_corrente: VISUALIZZA_METEO_CORRENTE
 			-- Application window 1
