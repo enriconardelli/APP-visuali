@@ -117,7 +117,7 @@ feature {NONE} -- Implementation GUI
 
 			enclosing_box.extend (pressure_label)
 			enclosing_box.set_item_x_position (pressure_label, 10)
-			enclosing_box.set_item_y_position (pressure_label, 180)
+			enclosing_box.set_item_y_position (pressure_label, 200)
 
 			create pressure_value_label
 			pressure_value_label.set_text ("-")
@@ -126,7 +126,7 @@ feature {NONE} -- Implementation GUI
 
 			enclosing_box.extend (pressure_value_label)
 			enclosing_box.set_item_x_position (pressure_value_label, 280)
-			enclosing_box.set_item_y_position (pressure_value_label, 180)
+			enclosing_box.set_item_y_position (pressure_value_label, 200)
 		end
 
 feature {NONE} -- Contract checking
@@ -157,7 +157,7 @@ feature {NONE} -- Implementation widgets
 			-- Humidity value label
 
 	pressure_value_label: EV_LABEL
-			-- Pressure value label	
+			-- Pressure value label
 
 feature {NONE} -- Implementation Constants	
 

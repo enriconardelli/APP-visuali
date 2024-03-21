@@ -10,9 +10,95 @@ class
 inherit
 
 	VIS_MEM_METEO
+		redefine
+			reset_widget,
+			build_temperature_widgets,
+			build_humidity_widgets,
+			build_pressure_widgets
+		end
 
 create
 	default_create
+
+feature  -- Display update
+
+	reset_widget
+		do
+			precursor
+			old_temperature_value_label.set_text ("-")
+			old_humidity_value_label.set_text ("-")
+			old_pressure_value_label.set_text ("-")
+		end
+
+feature {NONE} -- Implementation GUI
+
+	build_temperature_widgets
+		do
+			precursor
+			create old_temperature_label
+			old_temperature_label.set_text ("Temp. precedente:")
+			old_temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
+			old_temperature_label.set_font (internal_font)
+
+			enclosing_box.extend (old_temperature_label)
+			enclosing_box.set_item_x_position (old_temperature_label, 10)
+			enclosing_box.set_item_y_position (old_temperature_label, 50)
+
+			create old_temperature_value_label
+			old_temperature_value_label.set_text ("-")
+			old_temperature_value_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
+			old_temperature_value_label.set_font (internal_font)
+
+			enclosing_box.extend (old_temperature_value_label)
+			enclosing_box.set_item_x_position (old_temperature_value_label, 280)
+			enclosing_box.set_item_y_position (old_temperature_value_label, 50)
+		end
+
+
+	build_humidity_widgets
+		do
+			precursor
+			create old_humidity_label
+			old_humidity_label.set_text ("Umidita' precedente:")
+			old_humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
+			old_humidity_label.set_font (internal_font)
+
+			enclosing_box.extend (old_humidity_label)
+			enclosing_box.set_item_x_position (old_humidity_label, 10)
+			enclosing_box.set_item_y_position (old_humidity_label, 150)
+
+			create old_humidity_value_label
+			old_humidity_value_label.set_text ("-")
+			old_humidity_value_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
+			old_humidity_value_label.set_font (internal_font)
+
+			enclosing_box.extend (old_humidity_value_label)
+			enclosing_box.set_item_x_position (old_humidity_value_label, 280)
+			enclosing_box.set_item_y_position (old_humidity_value_label, 150)
+		end
+
+	build_pressure_widgets
+	do
+		precursor
+		create old_pressure_label
+		old_pressure_label.set_text ("Pressione precedente:")
+		old_pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
+		old_pressure_label.set_font (internal_font)
+
+		enclosing_box.extend (old_pressure_label)
+		enclosing_box.set_item_x_position (old_pressure_label, 10)
+		enclosing_box.set_item_y_position (old_pressure_label, 250)
+
+		create old_pressure_value_label
+		old_pressure_value_label.set_text ("-")
+		old_pressure_value_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
+		old_pressure_value_label.set_font (internal_font)
+
+		enclosing_box.extend (old_pressure_value_label)
+		enclosing_box.set_item_x_position (old_pressure_value_label, 280)
+		enclosing_box.set_item_y_position (old_pressure_value_label, 250)
+
+	end
 
 feature -- Display update
 
@@ -25,6 +111,7 @@ feature -- Display update
 			temp_prev := media (temperatura_precedente, temperatura)
 			if temp_prev /= 0 then
 				temperature_value_label.set_text (temp_prev.out + "°")
+				old_temperature_value_label.set_text (temperatura_precedente.out + "°")
 			else
 				temperature_value_label.set_text (Dash)
 			end
@@ -42,6 +129,7 @@ feature -- Display update
 			hum_prev := media (umidita_precedente, umidita)
 			if hum_prev /= 0 then
 				humidity_value_label.set_text (hum_prev.out + "%%")
+				old_humidity_value_label.set_text (umidita_precedente.out + "%%")
 			else
 				humidity_value_label.set_text (dash)
 			end
@@ -66,5 +154,25 @@ feature -- Display update
 			no_pressure_displayed: pressione = 0 implies pressure_value_label.text.is_equal (Dash)
 			pressure_displayed: pressione /= 0 implies pressure_value_label.text.is_equal (pressione.out)
 		end
+
+feature {NONE} -- Implementation widgets
+
+	old_temperature_label: EV_LABEL
+			-- Temperature label old
+
+	old_humidity_label: EV_LABEL
+			-- Humidity label old
+
+	old_pressure_label: EV_LABEL
+			-- Pressure label old
+
+	old_temperature_value_label: EV_LABEL
+			-- Temperature value label old
+
+	old_humidity_value_label: EV_LABEL
+			-- Humidity value label old
+
+	old_pressure_value_label: EV_LABEL
+			-- Pressure value label	 old
 
 end
