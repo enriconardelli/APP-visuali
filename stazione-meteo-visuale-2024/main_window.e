@@ -196,9 +196,7 @@ feature {NONE} -- Implementation
 			sensor_humidity.set_humidity (Sensor_value_seed + Iteration_count)
 			sensor_pressure.set_pressure (720 + Sensor_value_seed + Iteration_count)
 
-			if sensor_temperature.event.is_suspended = false then
-				Iteration_count := Iteration_count + 1
-			end
+			Iteration_count := Iteration_count + 1
 
 			Application.process_events
 		end

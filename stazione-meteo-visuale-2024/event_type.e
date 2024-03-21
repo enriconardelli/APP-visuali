@@ -67,35 +67,7 @@ feature -- Publication
 		require
 			arguments_not_void: arguments /= Void
 		do
-			if not is_suspended then
-				do_all (agent {PROCEDURE [ANY, EVENT_DATA]}.call(arguments))
-			end
-		end
-
-feature -- Status report
-
-	is_suspended: BOOLEAN
-			-- Is the publication of all actions from the subscription list suspended?
-			-- (Answer: no by default.)
-
-feature -- Status settings
-
-	suspend_subscription
-			-- Ignore the call of all actions from the subscription list,
-			-- until feature restore_subscription is called.
-		do
-			is_suspended := True
-		ensure
-			subscription_suspended: is_suspended
-		end
-
-	restore_subscription
-			-- Consider again the call of all actions from the subscription list,
-			-- until feature suspend_subscription is called.
-		do
-			is_suspended := False
-		ensure
-			subscription_not_suspended: not is_suspended
+			do_all (agent {PROCEDURE [ANY, EVENT_DATA]}.call(arguments))
 		end
 
 end -- class EVENT_TYPE
