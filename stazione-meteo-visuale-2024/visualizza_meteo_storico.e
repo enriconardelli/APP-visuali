@@ -24,6 +24,7 @@ feature {NONE}-- Initialization
 			Precursor {EV_TITLED_WINDOW}
 			set_size (Window_width, Window_height)
 			build_widgets
+			make_top_row
 			make_row (1,10,50,70)
 			make_row (2,12,40,60)
 			disable_user_resize
@@ -34,6 +35,53 @@ feature {NONE}-- Initialization
 
 
 feature
+
+	make_top_row
+		local
+			label: EV_LABEL
+			temperature_label: EV_LABEL
+			humidity_label: EV_LABEL
+			pressure_label: EV_LABEL
+		do
+			create label
+			label.set_text ("n°")
+			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label.set_font (internal_font)
+
+			enclosing_box.extend (label)
+			enclosing_box.set_item_x_position (label, 10)
+			enclosing_box.set_item_y_position (label, next_y)
+
+			create temperature_label
+			temperature_label.set_text ("Temperatura")
+			temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
+			temperature_label.set_font (internal_font)
+
+			enclosing_box.extend (temperature_label)
+			enclosing_box.set_item_x_position (temperature_label, 100)
+			enclosing_box.set_item_y_position (temperature_label, next_y)
+
+			create humidity_label
+			humidity_label.set_text ("Umidita'")
+			humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
+			humidity_label.set_font (internal_font)
+
+			enclosing_box.extend (humidity_label)
+			enclosing_box.set_item_x_position (humidity_label, 300)
+			enclosing_box.set_item_y_position (humidity_label, next_y)
+
+			create pressure_label
+			pressure_label.set_text ("Pressione")
+			pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
+			pressure_label.set_font (internal_font)
+
+			enclosing_box.extend (pressure_label)
+			enclosing_box.set_item_x_position (pressure_label, 450)
+			enclosing_box.set_item_y_position (pressure_label, next_y)
+			next_y := next_y + 30
+		end
+
+
 	make_row (row_number: REAL; a_temperature: REAL; a_humidity: REAL; a_pressure: REAL)
 		local
 			label: EV_LABEL
@@ -51,30 +99,30 @@ feature
 			enclosing_box.set_item_y_position (label, next_y)
 
 			create temperature_label
-			temperature_label.set_text (a_temperature.out)
+			temperature_label.set_text (a_temperature.out+ "°")
 			temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
 			temperature_label.set_font (internal_font)
 
 			enclosing_box.extend (temperature_label)
-			enclosing_box.set_item_x_position (temperature_label, 50)
+			enclosing_box.set_item_x_position (temperature_label, 100)
 			enclosing_box.set_item_y_position (temperature_label, next_y)
 
 			create humidity_label
-			humidity_label.set_text (a_humidity.out)
+			humidity_label.set_text (a_humidity.out + "%%")
 			humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
 			humidity_label.set_font (internal_font)
 
 			enclosing_box.extend (humidity_label)
-			enclosing_box.set_item_x_position (humidity_label, 90)
+			enclosing_box.set_item_x_position (humidity_label, 300)
 			enclosing_box.set_item_y_position (humidity_label, next_y)
 
 			create pressure_label
-			pressure_label.set_text (a_pressure.out)
+			pressure_label.set_text (a_pressure.out + " mb")
 			pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
 			pressure_label.set_font (internal_font)
 
 			enclosing_box.extend (pressure_label)
-			enclosing_box.set_item_x_position (pressure_label, 130)
+			enclosing_box.set_item_x_position (pressure_label, 450)
 			enclosing_box.set_item_y_position (pressure_label, next_y)
 			next_y := next_y + 30
 
@@ -99,11 +147,11 @@ feature {NONE} -- Implementation widgets
 
 feature {NONE} -- Implementation Constants	
 
-	Window_width: INTEGER = 400
+	Window_width: INTEGER = 600
 
 	Window_height: INTEGER = 600
 
-	Font_size_height: INTEGER = 26
+	Font_size_height: INTEGER = 20
 
 	next_y: INTEGER
 
