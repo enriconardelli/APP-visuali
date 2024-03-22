@@ -70,6 +70,8 @@ feature {NONE} -- Implementation
 				-- Add 'reset' button primitive
 			create reset_button.make_with_text ("Reset")
 			reset_button.select_actions.extend (agent reset_widgets)
+			reset_button.select_actions.extend (agent reset_database_serie_storica)
+			reset_button.select_actions.extend (agent reset_window_serie_storica)
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
 			enclosing_box.set_item_y_position (reset_button, 200)
@@ -100,11 +102,11 @@ feature {NONE} -- Implementation
 			statistiche.set_title ("Statistiche")
 			statistiche.show
 
-			create finestra_lista_dati
-			finestra_lista_dati.set_x_position (x_position + window_width + 450)
-			finestra_lista_dati.set_y_position (y_position + window_height - 300)
-			finestra_lista_dati.set_title ("Storico dati")
-			finestra_lista_dati.show
+			create finestra_dati_meteo
+			finestra_dati_meteo.set_x_position (x_position + window_width + 450)
+			finestra_dati_meteo.set_y_position (y_position + window_height - 300)
+			finestra_dati_meteo.set_title ("Storico dati")
+			finestra_dati_meteo.show
 
 				-- Allow screen refresh on some platforms
 			unlock_update
@@ -205,12 +207,29 @@ feature {NONE} -- Implementation
 
 	change_value_once
 			-- Change values of `Sensor' object once.
-		do
-			sensor_temperature.set_temperature (Sensor_value_seed + Iteration_count )
-			sensor_humidity.set_humidity (Sensor_value_seed + Iteration_count)
-			sensor_pressure.set_pressure (720 + Sensor_value_seed + Iteration_count)
+		local
+			temperatura: REAL
+			umidita: REAL
+			pressione: REAL
 
+
+		do
 			Iteration_count := Iteration_count + 1
+
+			temperatura := Sensor_value_seed + Iteration_count
+			umidita :=  Sensor_value_seed + Iteration_count
+			pressione := 720 + Sensor_value_seed + Iteration_count
+
+			sensor_temperature.set_temperature (temperatura )
+			sensor_humidity.set_humidity (umidita)
+			sensor_pressure.set_pressure (pressione)
+
+			finestra_dati_meteo.lock_update
+			finestra_dati_meteo.add_weather_report ([Iteration_count, temperatura, umidita, pressione])
+			finestra_dati_meteo.reset_window
+			finestra_dati_meteo.fill_window
+			finestra_dati_meteo.unlock_update
+
 
 			Application.process_events
 		end
@@ -230,6 +249,16 @@ feature {NONE} -- Implementation
 				statistiche.destroy
 				Application.destroy
 			end
+		end
+
+	reset_database_serie_storica
+		do
+			finestra_dati_meteo.reset_database
+		end
+
+	reset_window_serie_storica
+		do
+			finestra_dati_meteo.reset_window 
 		end
 
 feature {NONE} -- Contract checking
@@ -264,7 +293,7 @@ feature {NONE} -- Implementation / widgets
 	statistiche: VISUALIZZA_METEO_STATISTICHE
 			-- Application window 3
 
-	finestra_lista_dati: VISUALIZZA_METEO_STORICO
+	finestra_dati_meteo: VISUALIZZA_METEO_STORICO
 
 	timer: EV_TIMEOUT
 			-- Timer per la pubblicazione di dati
