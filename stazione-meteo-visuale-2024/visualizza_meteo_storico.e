@@ -62,6 +62,8 @@ feature
 		end
 
 	refresh
+		local
+			i: REAL
 		do
 			lock_update
 
@@ -71,11 +73,13 @@ feature
 			make_top_row
 			from
 				Database_weather.finish
+				i := 1
 			until
-				Database_weather.before
+				Database_weather.before or i > max_items_shown
 			loop
 				make_row(Database_weather.item)
 				Database_weather.back
+				i := i+1
 			end
 
 			unlock_update
@@ -104,9 +108,11 @@ feature {NONE} -- Implementation Constants
 
 	Window_width: INTEGER = 250
 
-	Window_height: INTEGER = 600
+	Window_height: INTEGER = 700
 
 	Font_size_height: INTEGER = 20
+
+	max_items_shown: INTEGER = 20
 
 	next_y: INTEGER
 
