@@ -4,7 +4,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 
-class
+deferred class
 	VISUALIZZA_METEO_STORICO
 
 inherit
@@ -13,8 +13,6 @@ inherit
 			initialize
 		end
 
-create
-	default_create
 
 feature {NONE}-- Initialization
 
@@ -34,121 +32,43 @@ feature {NONE}-- Initialization
 			window_size_set: width = Window_width and height = Window_height
 		end
 
-
 feature
 
 	make_top_row
-		local
-			label: EV_LABEL
-			temperature_label: EV_LABEL
-			humidity_label: EV_LABEL
-			pressure_label: EV_LABEL
-		do
-			create label
-			label.set_text ("n°")
-			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
-			label.set_font (internal_font)
-
-			enclosing_box.extend (label)
-			enclosing_box.set_item_x_position (label, 10)
-			enclosing_box.set_item_y_position (label, 0)
-
-			create temperature_label
-			temperature_label.set_text ("Temperatura")
-			temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
-			temperature_label.set_font (internal_font)
-
-			enclosing_box.extend (temperature_label)
-			enclosing_box.set_item_x_position (temperature_label, 100)
-			enclosing_box.set_item_y_position (temperature_label, 0)
-
-			create humidity_label
-			humidity_label.set_text ("Umidita'")
-			humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
-			humidity_label.set_font (internal_font)
-
-			enclosing_box.extend (humidity_label)
-			enclosing_box.set_item_x_position (humidity_label, 300)
-			enclosing_box.set_item_y_position (humidity_label, 0)
-
-			create pressure_label
-			pressure_label.set_text ("Pressione")
-			pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
-			pressure_label.set_font (internal_font)
-
-			enclosing_box.extend (pressure_label)
-			enclosing_box.set_item_x_position (pressure_label, 450)
-			enclosing_box.set_item_y_position (pressure_label, 0)
-			next_y := next_y + 30
+		deferred
 		end
 
 
 	make_row (weather_report: TUPLE)
 		require
-			correct_number_of_elements: weather_report.count = 4
+			correct_number_of_elements: weather_report.count = 2
 			correct_format: weather_report[1].conforms_to (1.1)
 			correct_temperature_format: weather_report[2].conforms_to (1.1)
-			correct_humidity_format: weather_report[2].conforms_to (1.1)
-			correct_pressure_format: weather_report[2].conforms_to (1.1)
-		local
-			label: EV_LABEL
-			temperature_label: EV_LABEL
-			humidity_label: EV_LABEL
-			pressure_label: EV_LABEL
-
-		do
-			create label
-			label.set_text (weather_report[1].out)
-			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
-			label.set_font (internal_font)
-
-			enclosing_box.extend (label)
-			enclosing_box.set_item_x_position (label, 10)
-			enclosing_box.set_item_y_position (label, next_y)
-
-			create temperature_label
-			temperature_label.set_text (weather_report[2].out+ "°")
-			temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
-			temperature_label.set_font (internal_font)
-
-			enclosing_box.extend (temperature_label)
-			enclosing_box.set_item_x_position (temperature_label, 100)
-			enclosing_box.set_item_y_position (temperature_label, next_y)
-
-			create humidity_label
-			humidity_label.set_text (weather_report[3].out+ "%%")
-			humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
-			humidity_label.set_font (internal_font)
-
-			enclosing_box.extend (humidity_label)
-			enclosing_box.set_item_x_position (humidity_label, 300)
-			enclosing_box.set_item_y_position (humidity_label, next_y)
-
-			create pressure_label
-			pressure_label.set_text (weather_report[4].out+ " mb")
-			pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
-			pressure_label.set_font (internal_font)
-
-			enclosing_box.extend (pressure_label)
-			enclosing_box.set_item_x_position (pressure_label, 450)
-			enclosing_box.set_item_y_position (pressure_label, next_y)
-			next_y := next_y + 30
+		deferred
 
 		end
 
-	add_weather_report (weather_report: TUPLE)
-		require
-			correct_number_of_elements: weather_report.count = 4
-			correct_format: weather_report[1].conforms_to (1.1)
-			correct_temperature_format: weather_report[2].conforms_to (1.1)
-			correct_humidity_format: weather_report[2].conforms_to (1.1)
-			correct_pressure_format: weather_report[2].conforms_to (1.1)
+	add_weather_report (sensor_data: REAL)
 		do
-			Database_weather.extend (weather_report)
+			Database_weather.extend ([Database_weather.count + 1, sensor_data])
 		end
 
-	fill_window
+	reset
 		do
+			Database_weather.wipe_out
+			enclosing_box.wipe_out
+			make_top_row
+			next_y := 30
+		end
+
+	refresh
+		do
+			lock_update
+
+			enclosing_box.wipe_out
+			next_y := 30
+
+			make_top_row
 			from
 				Database_weather.finish
 			until
@@ -157,18 +77,8 @@ feature
 				make_row(Database_weather.item)
 				Database_weather.back
 			end
-		end
 
-	reset_database
-		do
-			Database_weather.wipe_out
-		end
-
-	reset_window
-		do
-			enclosing_box.wipe_out
-			make_top_row
-			next_y := 30
+			unlock_update
 		end
 
 
@@ -192,13 +102,14 @@ feature {NONE} -- Implementation Constants
 
 	Database_weather: TWO_WAY_LIST[ TUPLE ]
 
-	Window_width: INTEGER = 600
+	Window_width: INTEGER = 250
 
 	Window_height: INTEGER = 600
 
 	Font_size_height: INTEGER = 20
 
 	next_y: INTEGER
+
 
 	internal_font: EV_FONT
 			-- Internal font used by various widgets

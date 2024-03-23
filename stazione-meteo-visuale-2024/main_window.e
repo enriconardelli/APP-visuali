@@ -70,8 +70,7 @@ feature {NONE} -- Implementation
 				-- Add 'reset' button primitive
 			create reset_button.make_with_text ("Reset")
 			reset_button.select_actions.extend (agent reset_widgets)
-			reset_button.select_actions.extend (agent reset_database_serie_storica)
-			reset_button.select_actions.extend (agent reset_window_serie_storica)
+			reset_button.select_actions.extend (agent reset_serie_storica)
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
 			enclosing_box.set_item_y_position (reset_button, 200)
@@ -102,11 +101,23 @@ feature {NONE} -- Implementation
 			statistiche.set_title ("Statistiche")
 			statistiche.show
 
-			create finestra_dati_meteo
-			finestra_dati_meteo.set_x_position (x_position + window_width + 450)
-			finestra_dati_meteo.set_y_position (y_position + window_height - 300)
-			finestra_dati_meteo.set_title ("Storico dati")
-			finestra_dati_meteo.show
+			create finestra_dati_temperatura
+			finestra_dati_temperatura.set_x_position (x_position + window_width + 450)
+			finestra_dati_temperatura.set_y_position (y_position + window_height - 300)
+			finestra_dati_temperatura.set_title ("Storico temperatura")
+			finestra_dati_temperatura.show
+
+			create finestra_dati_umidita
+			finestra_dati_umidita.set_x_position (x_position + window_width + 700)
+			finestra_dati_umidita.set_y_position (y_position + window_height - 300)
+			finestra_dati_umidita.set_title ("Storico umidita'")
+			finestra_dati_umidita.show
+
+			create finestra_dati_pressione
+			finestra_dati_pressione.set_x_position (x_position + window_width + 950)
+			finestra_dati_pressione.set_y_position (y_position + window_height - 300)
+			finestra_dati_pressione.set_title ("Storico pressione")
+			finestra_dati_pressione.show
 
 				-- Allow screen refresh on some platforms
 			unlock_update
@@ -155,6 +166,10 @@ feature {NONE} -- Implementation
 			sensor_temperature.event.subscribe (agent statistiche.set_temperature(?))
 			sensor_humidity.event.subscribe (agent statistiche.set_humidity(?))
 			sensor_pressure.event.subscribe (agent statistiche.set_pressure(?))
+
+			sensor_temperature.event.subscribe (agent finestra_dati_temperatura.add_weather_report(?))
+			sensor_humidity.event.subscribe (agent finestra_dati_umidita.add_weather_report(?))
+			sensor_pressure.event.subscribe (agent finestra_dati_pressione.add_weather_report(?))
 
 			create timer.make_with_interval (1000)
 			restart_actions
@@ -224,11 +239,9 @@ feature {NONE} -- Implementation
 			sensor_humidity.set_humidity (umidita)
 			sensor_pressure.set_pressure (pressione)
 
-			finestra_dati_meteo.lock_update
-			finestra_dati_meteo.add_weather_report ([Iteration_count, temperatura, umidita, pressione])
-			finestra_dati_meteo.reset_window
-			finestra_dati_meteo.fill_window
-			finestra_dati_meteo.unlock_update
+			finestra_dati_temperatura.refresh
+			finestra_dati_umidita.refresh
+			finestra_dati_pressione.refresh
 
 
 			Application.process_events
@@ -251,15 +264,13 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	reset_database_serie_storica
+	reset_serie_storica
 		do
-			finestra_dati_meteo.reset_database
+			finestra_dati_temperatura.reset
+			finestra_dati_umidita.reset
+			finestra_dati_pressione.reset
 		end
 
-	reset_window_serie_storica
-		do
-			finestra_dati_meteo.reset_window 
-		end
 
 feature {NONE} -- Contract checking
 
@@ -293,7 +304,11 @@ feature {NONE} -- Implementation / widgets
 	statistiche: VISUALIZZA_METEO_STATISTICHE
 			-- Application window 3
 
-	finestra_dati_meteo: VISUALIZZA_METEO_STORICO
+	finestra_dati_temperatura: VISUALIZZA_TEMPERATURA_STORICO
+
+	finestra_dati_umidita: VISUALIZZA_UMIDITA_STORICO
+
+	finestra_dati_pressione: VISUALIZZA_PRESSIONE_STORICO
 
 	timer: EV_TIMEOUT
 			-- Timer per la pubblicazione di dati
