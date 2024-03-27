@@ -108,6 +108,13 @@ feature {NONE} -- Implementation
 			finestra_dati_meteo.set_title ("Storico dati")
 			finestra_dati_meteo.show
 
+			create finestra_grafico
+			finestra_grafico.set_x_position (x_position + window_width + 450)
+			finestra_grafico.set_y_position (y_position + window_height - 300)
+			finestra_grafico.set_title ("Grafico dati")
+			finestra_grafico.show
+
+
 				-- Allow screen refresh on some platforms
 			unlock_update
 		ensure
@@ -155,6 +162,8 @@ feature {NONE} -- Implementation
 			sensor_temperature.event.subscribe (agent statistiche.set_temperature(?))
 			sensor_humidity.event.subscribe (agent statistiche.set_humidity(?))
 			sensor_pressure.event.subscribe (agent statistiche.set_pressure(?))
+
+			sensor_temperature.event.subscribe (agent finestra_grafico.add_weather_report(?))
 
 			create timer.make_with_interval (1000)
 			restart_actions
@@ -258,7 +267,7 @@ feature {NONE} -- Implementation
 
 	reset_window_serie_storica
 		do
-			finestra_dati_meteo.reset_window 
+			finestra_dati_meteo.reset_window
 		end
 
 feature {NONE} -- Contract checking
@@ -294,6 +303,8 @@ feature {NONE} -- Implementation / widgets
 			-- Application window 3
 
 	finestra_dati_meteo: VISUALIZZA_METEO_STORICO
+
+	finestra_grafico: VISUALIZZA_METEO_GRAFICO
 
 	timer: EV_TIMEOUT
 			-- Timer per la pubblicazione di dati
