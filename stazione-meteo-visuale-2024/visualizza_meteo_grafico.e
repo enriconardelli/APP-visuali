@@ -25,8 +25,16 @@ feature {NONE}-- Initialization
 			set_size (Window_width, Window_height)
 
 			create Database_weather.make
---			build_widgets
 
+			create main_container
+			create world
+
+			create buffer.make_with_size (Window_width, Window_height)
+			create grafico
+			create projector.make_with_buffer (world, buffer, grafico)
+			main_container.extend(grafico)
+			projector.project
+			extend(main_container)
 
 			disable_user_resize
 
@@ -34,70 +42,51 @@ feature {NONE}-- Initialization
 			window_size_set: width = Window_width and height = Window_height
 		end
 
-	build_widgets
-			-- Build GUI elements.
-		do
-			create main_container
-			create world
-			create punto.make_with_position (20, 20)
-			punto.set_line_width (20)
-			world.extend (punto)
-
-			create buffer.make_with_size (100, 100)
-			create grafico
-			create projector.make_with_buffer (world, buffer, grafico)
-			main_container.extend(grafico)
-			projector.project
-
-			extend(main_container)
-
-		end
 
 feature
 
+	clear
+		do
+			world.wipe_out
+			Database_weather.wipe_out
+			projector.project
+		end
 
 	refresh
 		local
 			i: INTEGER
+			place : INTEGER
 		do
 			lock_update
 
-			create main_container
-			create world
-
-
-
+			place := 1
+			world.wipe_out
+			if Database_weather.count > Number_points then i := Database_weather.count - Number_points + 1
+				else i := 1
+			end
 			from
-				Database_weather.start
-				i := 1
+				Database_weather.go_i_th (i)
 			until
-				Database_weather.after or i > 20
+				Database_weather.after
 			loop
-				aggiungi_punto(Database_weather.item.i_th(1) *10, Database_weather.item.i_th (2)*5)
+				aggiungi_punto(place  *30, 250 - Database_weather.item *5)
 				Database_weather.forth
-				i := i+1
+				place := place + 1
 			end
 
-			create buffer.make_with_size (Window_width, Window_height)
-			create grafico
-			create projector.make_with_buffer (world, buffer, grafico)
-			main_container.extend(grafico)
+
 			projector.project
 
-			extend(main_container)
 
 			unlock_update
 		end
 
 
 	add_weather_report (sensor_data: REAL)
-		local
-			a_list: LINKED_LIST [REAL]
+
 		do
-			create a_list.make
-			a_list.extend (Database_weather.count)
-			a_list.extend (sensor_data)
-			Database_weather.extend (a_list)
+
+			Database_weather.extend (sensor_data)
 			refresh
 		end
 
@@ -105,11 +94,17 @@ feature {NONE}
 
 	aggiungi_punto (numero_osservazione: REAL; dato_osservato: REAL)
 		local
-			punto1: EV_MODEL_DOT
+			punto: EV_MODEL_DOT
+			testo: EV_MODEL_TEXT
+			i: REAL
 		do
-			create punto1.make_with_position (numero_osservazione.ceiling , dato_osservato.ceiling )
-			punto1.set_line_width (5)
-			world.extend (punto1)
+			create punto.make_with_position (numero_osservazione.ceiling , dato_osservato.ceiling )
+			punto.set_line_width (5)
+			world.extend (punto)
+			create testo.make_with_position (numero_osservazione.ceiling , dato_osservato.ceiling - 15)
+			i := (250 - dato_osservato ) / 5
+			testo.set_text ( i.out )
+			world.extend (testo)
 		end
 
 
@@ -124,19 +119,19 @@ feature {NONE} -- Implementation widgets
 
 	world: EV_MODEL_WORLD
 
-	punto: EV_MODEL_DOT
-
 	buffer: EV_PIXMAP
 
 feature {NONE} -- Implementation Constants	
 
-	Database_weather: LINKED_LIST[	LINKED_LIST[REAL] ]
+	Database_weather: LINKED_LIST[ REAL ]
 
-	Window_width: INTEGER = 400
+	Window_width: INTEGER = 600
 
 	Window_height: INTEGER = 300
 
 	Font_size_height: INTEGER = 26
+
+	Number_points : INTEGER = 20
 
 	internal_font: EV_FONT
 			-- Internal font used by various widgets
