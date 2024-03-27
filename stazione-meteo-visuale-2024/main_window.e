@@ -172,7 +172,7 @@ feature {NONE} -- Implementation
 			sensor_pressure.event.subscribe (agent finestra_dati_pressione.add_weather_report(?))
 
 			create timer.make_with_interval (1000)
-			restart_actions
+			continue_actions
 		end
 
 
@@ -184,12 +184,12 @@ feature {NONE} -- Implementation
 
 				-- Change button to 'Continue' button
 			start_button.select_actions.wipe_out
-			start_button.select_actions.extend (agent restart_actions)
+			start_button.select_actions.extend (agent continue_actions)
 			start_button.set_text ("Continue")
 		end
 
 
-	restart_actions
+	continue_actions
 		do
 				-- Add action to the timer
 			timer.actions.extend (agent change_value_once)
