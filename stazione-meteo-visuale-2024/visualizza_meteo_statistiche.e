@@ -147,6 +147,7 @@ feature -- Display update
 			press_prev := media (pressione_precedente, pressione)
 			if press_prev /= 0 then
 				pressure_value_label.set_text (press_prev.out + " mb")
+				old_pressure_value_label.set_text (pressione_precedente.out + " mb")
 			else
 				pressure_value_label.set_text (dash)
 			end
