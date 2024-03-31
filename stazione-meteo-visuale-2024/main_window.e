@@ -108,25 +108,25 @@ feature {NONE} -- Implementation
 			create finestra_dati_temperatura
 			finestra_dati_temperatura.set_x_position (x_position + window_width + 450)
 			finestra_dati_temperatura.set_y_position (y_position + window_height - 300)
-			finestra_dati_temperatura.set_title ("Storico temperatura")
+			finestra_dati_temperatura.set_title ("Storico temperatura corrente")
 			finestra_dati_temperatura.show
 
 			create finestra_dati_umidita
 			finestra_dati_umidita.set_x_position (x_position + window_width + 700)
 			finestra_dati_umidita.set_y_position (y_position + window_height - 300)
-			finestra_dati_umidita.set_title ("Storico umidita'")
+			finestra_dati_umidita.set_title ("Storico umidita' corrente")
 			finestra_dati_umidita.show
 
 			create finestra_dati_pressione
 			finestra_dati_pressione.set_x_position (x_position + window_width + 950)
 			finestra_dati_pressione.set_y_position (y_position + window_height - 300)
-			finestra_dati_pressione.set_title ("Storico pressione")
+			finestra_dati_pressione.set_title ("Storico pressione corrente")
 			finestra_dati_pressione.show
 
 			create finestra_grafico
 			finestra_grafico.set_x_position (x_position + window_width + 450)
 			finestra_grafico.set_y_position (y_position + window_height - 300)
-			finestra_grafico.set_title ("Grafico dati")
+			finestra_grafico.set_title ("Grafico meteo corrente")
 			finestra_grafico.show
 
 
