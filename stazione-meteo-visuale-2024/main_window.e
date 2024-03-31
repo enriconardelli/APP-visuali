@@ -70,7 +70,13 @@ feature {NONE} -- Implementation
 				-- Add 'reset' button primitive
 			create reset_button.make_with_text ("Reset")
 			reset_button.select_actions.extend (agent reset_widgets)
+
 			reset_button.select_actions.extend (agent reset_serie_storica)
+
+			reset_button.select_actions.extend (agent reset_database_serie_storica)
+			reset_button.select_actions.extend (agent reset_window_serie_storica)
+			reset_button.select_actions.extend (agent reset_grafico)
+
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
 			enclosing_box.set_item_y_position (reset_button, 200)
@@ -118,6 +124,13 @@ feature {NONE} -- Implementation
 			finestra_dati_pressione.set_y_position (y_position + window_height - 300)
 			finestra_dati_pressione.set_title ("Storico pressione")
 			finestra_dati_pressione.show
+
+			create finestra_grafico
+			finestra_grafico.set_x_position (x_position + window_width + 450)
+			finestra_grafico.set_y_position (y_position + window_height - 300)
+			finestra_grafico.set_title ("Grafico dati")
+			finestra_grafico.show
+
 
 				-- Allow screen refresh on some platforms
 			unlock_update
@@ -167,9 +180,13 @@ feature {NONE} -- Implementation
 			sensor_humidity.event.subscribe (agent statistiche.set_humidity(?))
 			sensor_pressure.event.subscribe (agent statistiche.set_pressure(?))
 
+
 			sensor_temperature.event.subscribe (agent finestra_dati_temperatura.add_weather_report(?))
 			sensor_humidity.event.subscribe (agent finestra_dati_umidita.add_weather_report(?))
 			sensor_pressure.event.subscribe (agent finestra_dati_pressione.add_weather_report(?))
+
+			sensor_temperature.event.subscribe (agent finestra_grafico.add_weather_report(?))
+
 
 			create timer.make_with_interval (1000)
 			continue_actions
@@ -272,6 +289,18 @@ feature {NONE} -- Implementation
 		end
 
 
+
+	reset_window_serie_storica
+		do
+			finestra_dati_meteo.reset_window
+		end
+
+	reset_grafico
+		do
+			finestra_grafico.clear
+		end
+
+
 feature {NONE} -- Contract checking
 
 	is_in_default_state: BOOLEAN
@@ -309,6 +338,8 @@ feature {NONE} -- Implementation / widgets
 	finestra_dati_umidita: VISUALIZZA_UMIDITA_STORICO
 
 	finestra_dati_pressione: VISUALIZZA_PRESSIONE_STORICO
+
+	finestra_grafico: VISUALIZZA_METEO_GRAFICO
 
 	timer: EV_TIMEOUT
 			-- Timer per la pubblicazione di dati
