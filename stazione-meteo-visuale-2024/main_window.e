@@ -73,8 +73,6 @@ feature {NONE} -- Implementation
 
 			reset_button.select_actions.extend (agent reset_serie_storica)
 
-			reset_button.select_actions.extend (agent reset_database_serie_storica)
-			reset_button.select_actions.extend (agent reset_window_serie_storica)
 			reset_button.select_actions.extend (agent reset_grafico)
 
 			enclosing_box.extend (reset_button)
@@ -289,11 +287,6 @@ feature {NONE} -- Implementation
 		end
 
 
-
-	reset_window_serie_storica
-		do
-			finestra_dati_meteo.reset_window
-		end
 
 	reset_grafico
 		do
