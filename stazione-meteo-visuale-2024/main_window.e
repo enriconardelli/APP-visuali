@@ -70,15 +70,19 @@ feature {NONE} -- Implementation
 				-- Add 'reset' button primitive
 			create reset_button.make_with_text ("Reset")
 			reset_button.select_actions.extend (agent reset_widgets)
-
 			reset_button.select_actions.extend (agent reset_serie_storica)
-
 			reset_button.select_actions.extend (agent reset_grafico)
-
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
 			enclosing_box.set_item_y_position (reset_button, 200)
 
+				-- Add 'step' button primitive
+			create step_button.make_with_text  ("Step")
+			step_button.select_actions.extend (agent change_value_once)
+			enclosing_box.extend (step_button)
+			enclosing_box.set_item_x_position (step_button, 153)
+			enclosing_box.set_item_y_position (step_button, 150)
+			step_button.hide
 
 				-- Set main window position
 			set_x_position (140)
@@ -156,12 +160,9 @@ feature {NONE} -- Implementation
 			create info_dialog.make_with_text ("Ora inizieranno le misurazioni. Premi 'Pause' per interrompere, 'Reset' per azzerare i contatori, 'Step' per far avanzare le misurazioni di un passo.")
 			info_dialog.show_modal_to_window (Current)
 
-				-- Add 'step' button primitive
-			create step_button.make_with_text  ("Step")
-			step_button.select_actions.extend (agent change_value_once)
-			enclosing_box.extend (step_button)
-			enclosing_box.set_item_x_position (step_button, 153)
-			enclosing_box.set_item_y_position (step_button, 150)
+				-- Show step button
+			step_button.show
+			step_button.disable_sensitive
 
 				-- Subscribe to temperature, humidity and pressure in meteo_corrente
 			sensor_temperature.event.subscribe (agent meteo_corrente.set_temperature(?))
@@ -201,6 +202,8 @@ feature {NONE} -- Implementation
 			start_button.select_actions.wipe_out
 			start_button.select_actions.extend (agent continue_actions)
 			start_button.set_text ("Continue")
+
+			step_button.enable_sensitive
 		end
 
 
@@ -213,6 +216,8 @@ feature {NONE} -- Implementation
 			start_button.select_actions.wipe_out
 			start_button.select_actions.extend (agent pause_actions)
 			start_button.set_text ("Pause")
+
+			step_button.disable_sensitive
 		end
 
 
@@ -231,7 +236,8 @@ feature {NONE} -- Implementation
 			start_button.select_actions.wipe_out
 			start_button.select_actions.extend (agent start_actions)
 			start_button.set_text ("Esegui misurazioni")
-			step_button.destroy
+
+			step_button.hide
 		end
 
 
