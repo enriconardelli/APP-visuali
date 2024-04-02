@@ -133,6 +133,12 @@ feature {NONE} -- Implementation
 			finestra_grafico.set_title ("Grafico meteo corrente")
 			finestra_grafico.show
 
+			create finestra_dati_meteo
+			finestra_dati_meteo.set_x_position (x_position + window_width + 450)
+			finestra_dati_meteo.set_y_position (y_position + window_height )
+			finestra_dati_meteo.set_title ("Storico dati corrente")
+			finestra_dati_meteo.show
+
 
 				-- Allow screen refresh on some platforms
 			unlock_update
@@ -260,6 +266,12 @@ feature {NONE} -- Implementation
 			sensor_humidity.set_humidity (umidita)
 			sensor_pressure.set_pressure (pressione)
 
+			finestra_dati_meteo.lock_update
+			finestra_dati_meteo.add_weather_report ([Iteration_count, temperatura, umidita, pressione])
+			finestra_dati_meteo.reset_window
+			finestra_dati_meteo.fill_window
+			finestra_dati_meteo.unlock_update
+			
 			finestra_dati_temperatura.refresh
 			finestra_dati_umidita.refresh
 			finestra_dati_pressione.refresh
@@ -339,6 +351,8 @@ feature {NONE} -- Implementation / widgets
 	finestra_dati_pressione: VISUALIZZA_PRESSIONE_STORICO
 
 	finestra_grafico: VISUALIZZA_METEO_GRAFICO
+
+	finestra_dati_meteo: VISUALIZZA_STORICO_DATI_CORRENTE
 
 	timer: EV_TIMEOUT
 			-- Timer per la pubblicazione di dati
