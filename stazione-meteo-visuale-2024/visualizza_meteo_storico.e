@@ -22,10 +22,12 @@ feature {NONE}-- Initialization
 			Precursor {EV_TITLED_WINDOW}
 			set_size (Window_width, Window_height)
 			create Database_weather.make
+			create Database_current_weather.make
 			build_widgets
-			next_y := 30
+			next_y := 60
 
-			make_top_row
+			make_title_row
+			make_title
 			disable_user_resize
 
 		ensure then
@@ -34,30 +36,88 @@ feature {NONE}-- Initialization
 
 feature
 
-	make_top_row
+	make_title_row
+		local
+			label: EV_LABEL
+			label2: EV_LABEL
+			label3: EV_LABEL
+			label4: EV_LABEL
+		do
+			create label
+			label.set_text ("n°")
+			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label.set_font (internal_font)
+
+			enclosing_box.extend (label)
+			enclosing_box.set_item_x_position (label, firt_column_x_position)
+			enclosing_box.set_item_y_position (label, 30)
+
+			create label2
+			label2.set_text ("Corrente")
+			label2.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label2.set_font (internal_font)
+
+			enclosing_box.extend (label2)
+			enclosing_box.set_item_x_position (label2, second_column_x_position)
+			enclosing_box.set_item_y_position (label2, 30)
+
+			create label3
+			label3.set_text ("Prevista")
+			label3.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label3.set_font (internal_font)
+
+			enclosing_box.extend (label3)
+			enclosing_box.set_item_x_position (label3, third_column_x_position)
+			enclosing_box.set_item_y_position (label3, 30)
+
+			create label4
+			label4.set_text ("Media")
+			label4.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label4.set_font (internal_font)
+
+			enclosing_box.extend (label4)
+			enclosing_box.set_item_x_position (label4, fourth_column_x_position)
+			enclosing_box.set_item_y_position (label4, 30)
+		end
+
+	make_title
 		deferred
 		end
 
 
 	make_row (weather_report: TUPLE)
 		require
-			correct_number_of_elements: weather_report.count = 2
+			correct_number_of_elements: weather_report.count = 4
 			correct_format: weather_report[1].conforms_to (1.1)
-			correct_temperature_format: weather_report[2].conforms_to (1.1)
+			correct_current_format: weather_report[2].conforms_to (1.1)
+			correct_forecast_format: weather_report[3].conforms_to (1.1)
+			correct_mean_format: weather_report[4].conforms_to (1.1)
 		deferred
 
 		end
 
 	add_weather_report (sensor_data: REAL)
+
+		local
+			delta: REAL
+			media: REAL
+			previsione: REAL
 		do
-			Database_weather.extend ([Database_weather.count + 1, sensor_data])
+			if not Database_current_weather.is_empty   then
+				media := (Database_current_weather.last + sensor_data)/2
+				delta := sensor_data - Database_current_weather.last
+				previsione := media + delta
+			end
+
+			Database_current_weather.extend (sensor_data)
+			Database_weather.extend ([Database_weather.count + 1, sensor_data,  previsione, media])
 		end
 
 	reset
 		do
 			Database_weather.wipe_out
 			enclosing_box.wipe_out
-			make_top_row
+			make_title
 			next_y := 30
 		end
 
@@ -68,9 +128,11 @@ feature
 			lock_update
 
 			enclosing_box.wipe_out
-			next_y := 30
+			next_y := 60
 
-			make_top_row
+			make_title_row
+			make_title
+
 			from
 				Database_weather.finish
 				i := 1
@@ -101,12 +163,13 @@ feature {NONE} -- Implementation widgets
 
 	enclosing_box: EV_FIXED
 
-
 feature {NONE} -- Implementation Constants
 
 	Database_weather: TWO_WAY_LIST[ TUPLE ]
 
-	Window_width: INTEGER = 250
+	Database_current_weather: TWO_WAY_LIST[ REAL ]
+
+	Window_width: INTEGER = 450
 
 	Window_height: INTEGER = 700
 
@@ -114,6 +177,13 @@ feature {NONE} -- Implementation Constants
 
 	max_items_shown: INTEGER = 20
 
+	firt_column_x_position: INTEGER = 10
+
+	second_column_x_position: INTEGER = 80
+
+	third_column_x_position: INTEGER = 200
+
+	fourth_column_x_position: INTEGER = 320
 	next_y: INTEGER
 
 
