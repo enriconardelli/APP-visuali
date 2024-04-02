@@ -56,6 +56,9 @@ feature
 		local
 			i: INTEGER
 			place : INTEGER
+			massimo: REAL
+			minimo: REAL
+			temp: REAL
 		do
 			lock_update
 
@@ -64,19 +67,22 @@ feature
 			if Database_weather.count > Number_points then i := Database_weather.count - Number_points + 1
 				else i := 1
 			end
+
+			massimo := massimo_sensore + 5
+			minimo := minimo_sensore - 5
+			temp := 1 / ( massimo - minimo )
+
 			from
-				Database_weather.go_i_th (i)
+				Database_weather.start
 			until
 				Database_weather.after
 			loop
-				aggiungi_punto(place  *30, 250 - Database_weather.item *5)
+				aggiungi_punto(place  *30, 300 - ((Database_weather.item -  minimo)*300 * temp) , Database_weather.item.out )
 				Database_weather.forth
 				place := place + 1
 			end
 
-
 			projector.project
-
 
 			unlock_update
 		end
@@ -90,20 +96,56 @@ feature
 			refresh
 		end
 
+	massimo_sensore : REAL
+		local
+			massimo: REAL
+		do
+			massimo := Database_weather.first
+
+			from
+				Database_weather.start
+			until
+				Database_weather.after
+			loop
+				if Database_weather.item > massimo  then
+					massimo := Database_weather.item
+				end
+				Database_weather.forth
+			end
+			Result := massimo
+		end
+
+	minimo_sensore : REAL
+		local
+			minimo: REAL
+		do
+			minimo := Database_weather.first
+
+			from
+				Database_weather.start
+			until
+				Database_weather.after
+			loop
+				if Database_weather.item < minimo  then
+					minimo := Database_weather.item
+				end
+				Database_weather.forth
+			end
+		Result := minimo
+		end
+
 feature {NONE}
 
-	aggiungi_punto (numero_osservazione: REAL; dato_osservato: REAL)
+	aggiungi_punto (numero_osservazione: REAL; dato_osservato: REAL; label_text: STRING)
 		local
 			punto: EV_MODEL_DOT
 			testo: EV_MODEL_TEXT
-			i: REAL
 		do
 			create punto.make_with_position (numero_osservazione.ceiling , dato_osservato.ceiling )
 			punto.set_line_width (5)
 			world.extend (punto)
 			create testo.make_with_position (numero_osservazione.ceiling , dato_osservato.ceiling - 15)
-			i := (250 - dato_osservato ) / 5
-			testo.set_text ( i.out )
+			testo.set_text ( label_text )
 			world.extend (testo)
 		end
 

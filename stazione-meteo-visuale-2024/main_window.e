@@ -127,17 +127,29 @@ feature {NONE} -- Implementation
 			finestra_dati_pressione.set_title ("Storico pressione")
 			finestra_dati_pressione.show
 
-			create finestra_grafico
-			finestra_grafico.set_x_position (x_position + window_width + 450)
-			finestra_grafico.set_y_position (y_position + window_height - 300)
-			finestra_grafico.set_title ("Grafico meteo corrente")
-			finestra_grafico.show
-
 			create finestra_dati_meteo
 			finestra_dati_meteo.set_x_position (x_position + window_width + 450)
 			finestra_dati_meteo.set_y_position (y_position + window_height )
 			finestra_dati_meteo.set_title ("Storico dati corrente")
 			finestra_dati_meteo.show
+
+			create finestra_grafico_temperatura
+			finestra_grafico_temperatura.set_x_position (x_position + window_width + 450)
+			finestra_grafico_temperatura.set_y_position (y_position + window_height - 300)
+			finestra_grafico_temperatura.set_title ("Grafico temperatura corrente")
+			finestra_grafico_temperatura.show
+
+			create finestra_grafico_pressione
+			finestra_grafico_pressione.set_x_position (x_position + window_width + 550)
+			finestra_grafico_pressione.set_y_position (y_position + window_height - 300)
+			finestra_grafico_pressione.set_title ("Grafico pressione corrente")
+			finestra_grafico_pressione.show
+
+			create finestra_grafico_umidita
+			finestra_grafico_umidita.set_x_position (x_position + window_width + 650)
+			finestra_grafico_umidita.set_y_position (y_position + window_height - 300)
+			finestra_grafico_umidita.set_title ("Grafico umidita' corrente")
+			finestra_grafico_umidita.show
 
 
 				-- Allow screen refresh on some platforms
@@ -190,8 +202,9 @@ feature {NONE} -- Implementation
 			sensor_humidity.event.subscribe (agent finestra_dati_umidita.add_weather_report(?))
 			sensor_pressure.event.subscribe (agent finestra_dati_pressione.add_weather_report(?))
 
-			sensor_temperature.event.subscribe (agent finestra_grafico.add_weather_report(?))
-
+			sensor_temperature.event.subscribe (agent finestra_grafico_temperatura.add_weather_report(?))
+			sensor_pressure.event.subscribe (agent finestra_grafico_pressione.add_weather_report(?))
+			sensor_humidity.event.subscribe (agent finestra_grafico_umidita.add_weather_report(?))
 
 			create timer.make_with_interval (1000)
 			continue_actions
@@ -259,7 +272,7 @@ feature {NONE} -- Implementation
 			Iteration_count := Iteration_count + 1
 
 			temperatura := Sensor_value_seed + Iteration_count
-			umidita :=  Sensor_value_seed + Iteration_count
+			umidita :=  50 + Sensor_value_seed + Iteration_count
 			pressione := 720 + Sensor_value_seed + Iteration_count
 
 			sensor_temperature.set_temperature (temperatura )
@@ -271,7 +284,7 @@ feature {NONE} -- Implementation
 			finestra_dati_meteo.reset_window
 			finestra_dati_meteo.fill_window
 			finestra_dati_meteo.unlock_update
-			
+
 			finestra_dati_temperatura.refresh
 			finestra_dati_umidita.refresh
 			finestra_dati_pressione.refresh
@@ -308,7 +321,9 @@ feature {NONE} -- Implementation
 
 	reset_grafico
 		do
-			finestra_grafico.clear
+			finestra_grafico_temperatura.clear
+			finestra_grafico_umidita.clear
+			finestra_grafico_pressione.clear
 		end
 
 
@@ -350,9 +365,13 @@ feature {NONE} -- Implementation / widgets
 
 	finestra_dati_pressione: VISUALIZZA_PRESSIONE_STORICO
 
-	finestra_grafico: VISUALIZZA_METEO_GRAFICO
-
 	finestra_dati_meteo: VISUALIZZA_STORICO_DATI_CORRENTE
+
+	finestra_grafico_temperatura: VISUALIZZA_METEO_GRAFICO
+
+	finestra_grafico_pressione: VISUALIZZA_METEO_GRAFICO
+
+	finestra_grafico_umidita: VISUALIZZA_METEO_GRAFICO
 
 	timer: EV_TIMEOUT
 			-- Timer per la pubblicazione di dati
