@@ -12,6 +12,7 @@ inherit
 
 	EV_TITLED_WINDOW
 		redefine
+			create_interface_objects,
 			initialize,
 			is_in_default_state
 		end
@@ -27,6 +28,37 @@ create
 
 feature {NONE} -- Initialization
 
+	create_interface_objects
+		-- <Precursor>
+		do
+
+				-- creo container
+			create vertical_box
+			create enclosing_box
+			create check_button_list
+
+				-- creo oggetti finestre
+			create previsioni_meteo
+			create statistiche
+			create meteo_corrente
+			create finestra_dati_temperatura
+			create finestra_dati_pressione
+			create finestra_dati_umidita
+			create finestra_dati_meteo
+			create finestra_grafico_temperatura
+			create finestra_grafico_pressione
+			create finestra_grafico_umidita
+
+				-- creo check_button
+			create check_button1
+			create check_button2
+			create check_button3
+			create check_button4
+			create check_button5
+			create check_button6
+			create check_button7
+		end
+
 	initialize
 
 			-- Build the interface of this window.
@@ -36,6 +68,7 @@ feature {NONE} -- Initialization
 				-- Execute 'close_windows' when the user clicks on the cross in the title bar
 			close_request_actions.extend (agent destroy_application)
 			build_widgets
+			build_windows
 			set_title (Window_title)
 			set_size (Window_width, Window_height)
 			disable_user_resize
@@ -47,7 +80,7 @@ feature {NONE} -- Initialization
 feature {NONE} -- Implementation
 
 	build_widgets
-			-- Create the GUI elements.
+			-- Create the GUI elements of this window.
 		require
 			enclosing_box_not_yet_created: enclosing_box = void
 			start_button_not_yet_created: start_button = void
@@ -56,16 +89,41 @@ feature {NONE} -- Implementation
 				-- Avoid flicker on some platforms
 			lock_update
 
-				-- Cover entire window area with a primitive container.
-			create enclosing_box
-			extend (enclosing_box)
+				-- Struttura dei container
+			vertical_box.extend (enclosing_box)
+			extend (vertical_box)
+			vertical_box.extend (check_button_list)
+
+			check_button1.set_text ("Finestra storico dati corrente")
+			check_button2.set_text ("Finestra storico temperatura")
+			check_button3.set_text ("Finestra storico umidita'")
+			check_button4.set_text ("Finestra storico pressione")
+			check_button5.set_text ("Finestra grafico temperatura corrente")
+			check_button6.set_text ("Finestra grafico umidita' corrente")
+			check_button7.set_text ("Finestra Grafico pressione corrente")
+
+			check_button_list.extend(check_button1)
+			check_button_list.extend(check_button2)
+			check_button_list.extend(check_button3)
+			check_button_list.extend(check_button4)
+			check_button_list.extend(check_button5)
+			check_button_list.extend(check_button6)
+			check_button_list.extend(check_button7)
+
+			check_button1.select_actions.extend (agent mostra_finestra(finestra_dati_meteo,check_button1))
+			check_button2.select_actions.extend (agent mostra_finestra(finestra_dati_temperatura,check_button2))
+			check_button3.select_actions.extend (agent mostra_finestra(finestra_dati_umidita,check_button3))
+			check_button4.select_actions.extend (agent mostra_finestra(finestra_dati_pressione,check_button4))
+			check_button5.select_actions.extend (agent mostra_finestra(finestra_grafico_temperatura,check_button5))
+			check_button6.select_actions.extend (agent mostra_finestra(finestra_grafico_umidita,check_button6))
+			check_button7.select_actions.extend (agent mostra_finestra(finestra_grafico_pressione,check_button7))
 
 				-- Add 'start' button primitive
 			create start_button.make_with_text ("Esegui misurazioni")
 			start_button.select_actions.extend (agent start_actions)
 			enclosing_box.extend (start_button)
 			enclosing_box.set_item_x_position (start_button, 120)
-			enclosing_box.set_item_y_position (start_button, 115)
+			enclosing_box.set_item_y_position (start_button, 30)
 
 				-- Add 'reset' button primitive
 			create reset_button.make_with_text ("Reset")
@@ -74,83 +132,19 @@ feature {NONE} -- Implementation
 			reset_button.select_actions.extend (agent reset_grafico)
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
-			enclosing_box.set_item_y_position (reset_button, 200)
+			enclosing_box.set_item_y_position (reset_button, 90)
 
 				-- Add 'step' button primitive
 			create step_button.make_with_text  ("Step")
 			step_button.select_actions.extend (agent change_value_once)
 			enclosing_box.extend (step_button)
 			enclosing_box.set_item_x_position (step_button, 153)
-			enclosing_box.set_item_y_position (step_button, 150)
+			enclosing_box.set_item_y_position (step_button, 60)
 			step_button.hide
 
 				-- Set main window position
 			set_x_position (140)
 			set_y_position (40)
-
-				-- Set 'meteo_corrente' window
-			create meteo_corrente
-			meteo_corrente.set_x_position (x_position + window_width + 10)
-			meteo_corrente.set_y_position (y_position)
-			meteo_corrente.set_title ("Meteo corrente")
-			meteo_corrente.show
-
-				-- Set 'previsioni_meteo' window
-			create previsioni_meteo
-			previsioni_meteo.set_x_position (x_position)
-			previsioni_meteo.set_y_position (y_position + window_height + 25)
-			previsioni_meteo.set_title ("Previsioni meteo")
-			previsioni_meteo.show
-
-				-- Set 'statistiche' window
-			create statistiche
-			statistiche.set_x_position (x_position + window_width + 10)
-			statistiche.set_y_position (y_position + window_height + 25)
-			statistiche.set_title ("Statistiche")
-			statistiche.show
-
-			create finestra_dati_temperatura
-			finestra_dati_temperatura.set_x_position (x_position + window_width + 450)
-			finestra_dati_temperatura.set_y_position (y_position + window_height - 300)
-			finestra_dati_temperatura.set_title ("Storico temperatura")
-			finestra_dati_temperatura.show
-
-			create finestra_dati_umidita
-			finestra_dati_umidita.set_x_position (x_position + window_width + 700)
-			finestra_dati_umidita.set_y_position (y_position + window_height - 300)
-			finestra_dati_umidita.set_title ("Storico umidita'")
-			finestra_dati_umidita.show
-
-			create finestra_dati_pressione
-			finestra_dati_pressione.set_x_position (x_position + window_width + 950)
-			finestra_dati_pressione.set_y_position (y_position + window_height - 300)
-			finestra_dati_pressione.set_title ("Storico pressione")
-			finestra_dati_pressione.show
-
-			create finestra_dati_meteo
-			finestra_dati_meteo.set_x_position (x_position + window_width + 450)
-			finestra_dati_meteo.set_y_position (y_position + window_height )
-			finestra_dati_meteo.set_title ("Storico dati corrente")
-			finestra_dati_meteo.show
-
-			create finestra_grafico_temperatura
-			finestra_grafico_temperatura.set_x_position (x_position + window_width + 450)
-			finestra_grafico_temperatura.set_y_position (y_position + window_height - 300)
-			finestra_grafico_temperatura.set_title ("Grafico temperatura corrente")
-			finestra_grafico_temperatura.show
-
-			create finestra_grafico_pressione
-			finestra_grafico_pressione.set_x_position (x_position + window_width + 550)
-			finestra_grafico_pressione.set_y_position (y_position + window_height - 300)
-			finestra_grafico_pressione.set_title ("Grafico pressione corrente")
-			finestra_grafico_pressione.show
-
-			create finestra_grafico_umidita
-			finestra_grafico_umidita.set_x_position (x_position + window_width + 650)
-			finestra_grafico_umidita.set_y_position (y_position + window_height - 300)
-			finestra_grafico_umidita.set_title ("Grafico umidita' corrente")
-			finestra_grafico_umidita.show
-
 
 				-- Allow screen refresh on some platforms
 			unlock_update
@@ -163,6 +157,46 @@ feature {NONE} -- Implementation
 			statistiche_not_void: statistiche /= Void
 		end
 
+	build_windows
+			-- Create the other windows to be desplayed
+		do
+				-- Set 'meteo_corrente' window
+			meteo_corrente.set_position (x_position + window_width + 10, y_position)
+			meteo_corrente.set_title ("Meteo corrente")
+			meteo_corrente.show
+
+				-- Set 'previsioni_meteo' window
+			previsioni_meteo.set_position (x_position, y_position + window_height + 25)
+			previsioni_meteo.set_title ("Previsioni meteo")
+			previsioni_meteo.show
+
+				-- Set 'statistiche' window
+			statistiche.set_position (x_position + window_width + 10, y_position + window_height + 25)
+			statistiche.set_title ("Statistiche")
+			statistiche.show
+
+			finestra_dati_meteo.set_position (x_position + window_width + 450, y_position + window_height)
+			finestra_dati_meteo.set_title ("Storico dati corrente")
+
+			finestra_dati_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 300)
+			finestra_dati_temperatura.set_title ("Storico temperatura")
+
+			finestra_dati_umidita.set_position (x_position + window_width + 700, y_position + window_height - 300)
+			finestra_dati_umidita.set_title ("Storico umidita'")
+
+			finestra_dati_pressione.set_position (x_position + window_width + 950, y_position + window_height - 300)
+			finestra_dati_pressione.set_title ("Storico pressione")
+
+			finestra_grafico_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 300)
+			finestra_grafico_temperatura.set_title ("Grafico temperatura corrente")
+
+			finestra_grafico_pressione.set_position (x_position + window_width + 550, y_position + window_height - 300)
+			finestra_grafico_pressione.set_title ("Grafico pressione corrente")
+
+			finestra_grafico_umidita.set_position (x_position + window_width + 650, y_position + window_height - 300)
+			finestra_grafico_umidita.set_title ("Grafico umidita' corrente")
+
+		end
 
 	start_actions
 			-- Start the appropriate actions.
@@ -338,6 +372,14 @@ feature {NONE} -- Contract checking
 
 feature {NONE} -- Implementation / widgets
 
+	check_button1, check_button2, check_button3, check_button4, check_button5, check_button6, check_button7: EV_CHECK_BUTTON
+
+	vertical_box: EV_VERTICAL_SPLIT_AREA
+			--
+
+	check_button_list: EV_VERTICAL_BOX
+			--
+
 	enclosing_box: EV_FIXED
 			-- Invisible Primitives Container
 
@@ -350,6 +392,11 @@ feature {NONE} -- Implementation / widgets
 	step_button: EV_BUTTON
 			-- Step button	
 
+	timer: EV_TIMEOUT
+			-- Timer per la pubblicazione di dati
+
+feature {NONE} -- Finestre
+
 	meteo_corrente: VISUALIZZA_METEO_CORRENTE
 			-- Application window 1
 
@@ -360,21 +407,25 @@ feature {NONE} -- Implementation / widgets
 			-- Application window 3
 
 	finestra_dati_temperatura: VISUALIZZA_TEMPERATURA_STORICO
+			-- Application window 4
 
 	finestra_dati_umidita: VISUALIZZA_UMIDITA_STORICO
+			-- Application window 5
 
 	finestra_dati_pressione: VISUALIZZA_PRESSIONE_STORICO
+			-- Application window 6
 
 	finestra_dati_meteo: VISUALIZZA_STORICO_DATI_CORRENTE
+			-- Application window 7
 
 	finestra_grafico_temperatura: VISUALIZZA_METEO_GRAFICO
+			-- Application window 8
 
 	finestra_grafico_pressione: VISUALIZZA_METEO_GRAFICO
+			-- Application window 9
 
 	finestra_grafico_umidita: VISUALIZZA_METEO_GRAFICO
-
-	timer: EV_TIMEOUT
-			-- Timer per la pubblicazione di dati
+			-- Application window 10
 
 feature {NONE} -- Implementation / Constants
 
@@ -422,7 +473,16 @@ feature {NONE} -- Implementation / Constants
 	Window_width: INTEGER = 400
 			-- Width of the window
 
-	Window_height: INTEGER = 300
+	Window_height: INTEGER = 350
 			-- Height of the window
+
+	mostra_finestra (finestra : EV_TITLED_WINDOW; tasto : EV_CHECK_BUTTON)
+		do
+			if tasto.is_selected  then
+				finestra.show
+			 else
+			 	finestra.hide
+			end
+		end
 
 end -- class MAIN_WINDOW
