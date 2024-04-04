@@ -41,9 +41,9 @@ feature {NONE} -- Initialization
 			create previsioni_meteo
 			create statistiche
 			create meteo_corrente
-			create finestra_dati_temperatura
-			create finestra_dati_pressione
-			create finestra_dati_umidita
+			create finestra_dati_temperatura.make_with_temperature
+			create finestra_dati_pressione.make_with_pressure
+			create finestra_dati_umidita.make_with_humidity 
 			create finestra_dati_meteo
 			create finestra_grafico_temperatura
 			create finestra_grafico_pressione
@@ -67,10 +67,14 @@ feature {NONE} -- Initialization
 
 				-- Execute 'close_windows' when the user clicks on the cross in the title bar
 			close_request_actions.extend (agent destroy_application)
-			build_widgets
-			build_windows
+
 			set_title (Window_title)
 			set_size (Window_width, Window_height)
+			set_position (50,30)
+
+			build_widgets
+			build_windows
+
 			disable_user_resize
 		ensure then
 			window_title_set: title.is_equal (Window_title)
@@ -141,10 +145,6 @@ feature {NONE} -- Implementation
 			enclosing_box.set_item_x_position (step_button, 153)
 			enclosing_box.set_item_y_position (step_button, 60)
 			step_button.hide
-
-				-- Set main window position
-			set_x_position (140)
-			set_y_position (40)
 
 				-- Allow screen refresh on some platforms
 			unlock_update
@@ -406,13 +406,13 @@ feature {NONE} -- Finestre
 	statistiche: VISUALIZZA_METEO_STATISTICHE
 			-- Application window 3
 
-	finestra_dati_temperatura: VISUALIZZA_TEMPERATURA_STORICO
+	finestra_dati_temperatura: VISUALIZZA_METEO_STORICO
 			-- Application window 4
 
-	finestra_dati_umidita: VISUALIZZA_UMIDITA_STORICO
+	finestra_dati_umidita: VISUALIZZA_METEO_STORICO
 			-- Application window 5
 
-	finestra_dati_pressione: VISUALIZZA_PRESSIONE_STORICO
+	finestra_dati_pressione: VISUALIZZA_METEO_STORICO
 			-- Application window 6
 
 	finestra_dati_meteo: VISUALIZZA_STORICO_DATI_CORRENTE
