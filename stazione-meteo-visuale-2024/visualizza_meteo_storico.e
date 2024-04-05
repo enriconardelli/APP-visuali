@@ -21,7 +21,7 @@ feature	-- Creation procedures
 
 		make_with_temperature
 			do
-				create color.make_with_8_bit_rgb (255, 0, 0)				
+				create color.make_with_8_bit_rgb (255, 0, 0)
 				title_string := "Temperatura"
 				unit_of_measurement_string := "°"
 				default_create
@@ -50,11 +50,20 @@ feature {NONE}-- Initialization
 			-- Build the interface of this window.
 		do
 			Precursor {EV_TITLED_WINDOW}
-			set_size (Window_width, Window_height)
+
 			create Database_weather.make
 			create Database_current_weather.make
 			build_widgets
+
 			next_y := 60
+			avanzato:= FALSE
+
+			if avanzato then
+				set_size (Window_width, Window_height)
+			else
+				set_size (Window_width - 230, Window_height )
+
+			end
 
 			make_title_row
 			make_title
@@ -64,7 +73,42 @@ feature {NONE}-- Initialization
 			window_size_set: width = Window_width and height = Window_height
 		end
 
+		build_widgets
+				-- Build GUI elements.
+			do
+				create vertical_box
+				create enclosing_box
+				create horizontal_box
+				create check_button.make_with_text("avanzate")
+				extend (vertical_box)
+				vertical_box.extend (enclosing_box)
+	--			enclosing_box.extend_with_position_and_size (horizontal_box, 0, height - 30, width, 30)
+				vertical_box.extend (horizontal_box)
+				vertical_box.set_split_position (window_height - 30)
+				horizontal_box.extend(check_button)
+				check_button.select_actions.extend (agent toggle_avanzate)
+			end
+
 feature
+
+	make_title
+		local
+			label: EV_LABEL
+		do
+			create label
+			label.set_text (title_string)
+			label.set_foreground_color (color)
+			label.set_font (internal_font)
+
+			enclosing_box.extend (label)
+			if avanzato then
+				enclosing_box.set_item_x_position (label, 150)
+			else
+				enclosing_box.set_item_x_position (label, 40)
+			end
+
+			enclosing_box.set_item_y_position (label, 0)
+		end
 
 	make_title_row
 		local
@@ -91,37 +135,26 @@ feature
 			enclosing_box.set_item_x_position (label2, second_column_x_position)
 			enclosing_box.set_item_y_position (label2, 30)
 
-			create label3
-			label3.set_text ("Prevista")
-			label3.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
-			label3.set_font (internal_font)
+			if avanzato then
+				create label3
+				label3.set_text ("Prevista")
+				label3.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				label3.set_font (internal_font)
 
-			enclosing_box.extend (label3)
-			enclosing_box.set_item_x_position (label3, third_column_x_position)
-			enclosing_box.set_item_y_position (label3, 30)
+				enclosing_box.extend (label3)
+				enclosing_box.set_item_x_position (label3, third_column_x_position)
+				enclosing_box.set_item_y_position (label3, 30)
 
-			create label4
-			label4.set_text ("Media")
-			label4.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
-			label4.set_font (internal_font)
+				create label4
+				label4.set_text ("Media")
+				label4.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				label4.set_font (internal_font)
 
-			enclosing_box.extend (label4)
-			enclosing_box.set_item_x_position (label4, fourth_column_x_position)
-			enclosing_box.set_item_y_position (label4, 30)
-		end
+				enclosing_box.extend (label4)
+				enclosing_box.set_item_x_position (label4, fourth_column_x_position)
+				enclosing_box.set_item_y_position (label4, 30)
+			end
 
-	make_title
-		local
-			label: EV_LABEL
-		do
-			create label
-			label.set_text (title_string)
-			label.set_foreground_color (color)
-			label.set_font (internal_font)
-
-			enclosing_box.extend (label)
-			enclosing_box.set_item_x_position (label, 150)
-			enclosing_box.set_item_y_position (label, 0)
 		end
 
 	make_row (weather_report: TUPLE)
@@ -156,23 +189,26 @@ feature
 			enclosing_box.set_item_x_position (sensor_label, second_column_x_position)
 			enclosing_box.set_item_y_position (sensor_label, next_y)
 
-			create forecast_label
-			forecast_label.set_text (weather_report[3].out + unit_of_measurement_string)
-			forecast_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
-			forecast_label.set_font (internal_font)
+			if avanzato then
+				create forecast_label
+				forecast_label.set_text (weather_report[3].out + unit_of_measurement_string)
+				forecast_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				forecast_label.set_font (internal_font)
 
-			enclosing_box.extend (forecast_label)
-			enclosing_box.set_item_x_position (forecast_label, third_column_x_position)
-			enclosing_box.set_item_y_position (forecast_label, next_y)
+				enclosing_box.extend (forecast_label)
+				enclosing_box.set_item_x_position (forecast_label, third_column_x_position)
+				enclosing_box.set_item_y_position (forecast_label, next_y)
 
-			create mean_label
-			mean_label.set_text (weather_report[4].out + unit_of_measurement_string)
-			mean_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
-			mean_label.set_font (internal_font)
+				create mean_label
+				mean_label.set_text (weather_report[4].out + unit_of_measurement_string)
+				mean_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				mean_label.set_font (internal_font)
 
-			enclosing_box.extend (mean_label)
-			enclosing_box.set_item_x_position (mean_label, fourth_column_x_position)
-			enclosing_box.set_item_y_position (mean_label, next_y)
+				enclosing_box.extend (mean_label)
+				enclosing_box.set_item_x_position (mean_label, fourth_column_x_position)
+				enclosing_box.set_item_y_position (mean_label, next_y)
+
+			end
 
 			next_y := next_y + 30
 
@@ -231,20 +267,36 @@ feature
 
 feature {NONE} -- Implementation GUI
 
-	build_widgets
-			-- Build GUI elements.
+
+	toggle_avanzate
 		do
-			create enclosing_box
-			extend (enclosing_box)
+			if check_button.is_selected then
+				avanzato:= TRUE
+				refresh
+				set_size (Window_width, Window_height)
+			else
+				avanzato:= FALSE
+				refresh
+				set_size (Window_width - 230, Window_height )
+
+			end
 
 		end
 
 
 feature {NONE} -- Implementation widgets
 
+	vertical_box: EV_VERTICAL_SPLIT_AREA
+
 	enclosing_box: EV_FIXED
 
+	horizontal_box: EV_HORIZONTAL_BOX
+
+	check_button: EV_CHECK_BUTTON
+
 feature {NONE} -- Implementation Constants
+
+	avanzato: BOOLEAN
 
 	color: EV_COLOR
 
@@ -258,7 +310,7 @@ feature {NONE} -- Implementation Constants
 
 	Window_width: INTEGER = 450
 
-	Window_height: INTEGER = 700
+	Window_height: INTEGER = 730
 
 	Font_size_height: INTEGER = 20
 

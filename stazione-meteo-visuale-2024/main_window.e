@@ -43,7 +43,7 @@ feature {NONE} -- Initialization
 			create meteo_corrente
 			create finestra_dati_temperatura.make_with_temperature
 			create finestra_dati_pressione.make_with_pressure
-			create finestra_dati_umidita.make_with_humidity 
+			create finestra_dati_umidita.make_with_humidity
 			create finestra_dati_meteo
 			create finestra_grafico_temperatura
 			create finestra_grafico_pressione
@@ -57,6 +57,9 @@ feature {NONE} -- Initialization
 			create check_button5
 			create check_button6
 			create check_button7
+
+				-- creo il timer
+			create timer.make_with_interval (1000)
 		end
 
 	initialize
@@ -240,7 +243,6 @@ feature {NONE} -- Implementation
 			sensor_pressure.event.subscribe (agent finestra_grafico_pressione.add_weather_report(?))
 			sensor_humidity.event.subscribe (agent finestra_grafico_umidita.add_weather_report(?))
 
-			create timer.make_with_interval (1000)
 			continue_actions
 		end
 
