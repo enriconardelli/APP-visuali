@@ -57,17 +57,15 @@ feature {NONE}-- Initialization
 
 			next_y := 60
 			avanzato:= FALSE
+			max_items_shown := 20
+			window_width := 220
 
-			if avanzato then
-				set_size (Window_width, Window_height)
-			else
-				set_size (Window_width - 230, Window_height )
-
-			end
+			set_size (Window_width, Window_height)
 
 			make_title_row
 			make_title
 			disable_user_resize
+
 
 		ensure then
 			window_size_set: width = Window_width and height = Window_height
@@ -75,18 +73,37 @@ feature {NONE}-- Initialization
 
 		build_widgets
 				-- Build GUI elements.
+			local
+				i: INTEGER
 			do
 				create vertical_box
 				create enclosing_box
 				create horizontal_box
 				create check_button.make_with_text("avanzate")
+				create combo_box
+				create elemento_lista.make_with_text ("2")
+
 				extend (vertical_box)
 				vertical_box.extend (enclosing_box)
-	--			enclosing_box.extend_with_position_and_size (horizontal_box, 0, height - 30, width, 30)
 				vertical_box.extend (horizontal_box)
 				vertical_box.set_split_position (window_height - 30)
+				horizontal_box.extend (combo_box)
 				horizontal_box.extend(check_button)
+				horizontal_box.set_split_position (130)
 				check_button.select_actions.extend (agent toggle_avanzate)
+
+				combo_box.disable_edit
+
+				from
+					i:= 5
+				until
+					i = 20
+				loop
+					combo_box.extend (create {EV_LIST_ITEM}.make_with_text (i.out))
+					i := i+1
+				end
+
+				combo_box.select_actions.extend (agent refresh)
 			end
 
 feature
@@ -242,26 +259,30 @@ feature
 		local
 			i: REAL
 		do
-			lock_update
+			if not combo_box.is_list_shown then
+				lock_update
 
-			enclosing_box.wipe_out
-			next_y := 60
+				enclosing_box.wipe_out
+				next_y := 60
 
-			make_title_row
-			make_title
+				make_title_row
+				make_title
 
-			from
-				Database_weather.finish
-				i := 1
-			until
-				Database_weather.before or i > max_items_shown
-			loop
-				make_row(Database_weather.item)
-				Database_weather.back
-				i := i+1
+				max_items_shown := combo_box.selected_text.to_integer
+
+				from
+					Database_weather.finish
+					i := 1
+				until
+					Database_weather.before or i > max_items_shown
+				loop
+					make_row(Database_weather.item)
+					Database_weather.back
+					i := i+1
+				end
+
+				unlock_update
 			end
-
-			unlock_update
 		end
 
 
@@ -273,14 +294,14 @@ feature {NONE} -- Implementation GUI
 			if check_button.is_selected then
 				avanzato:= TRUE
 				refresh
-				set_size (Window_width, Window_height)
+				Window_width := 450
 			else
 				avanzato:= FALSE
 				refresh
-				set_size (Window_width - 230, Window_height )
-
+				Window_width := 220
 			end
 
+			set_size (Window_width, Window_height)
 		end
 
 
@@ -290,9 +311,13 @@ feature {NONE} -- Implementation widgets
 
 	enclosing_box: EV_FIXED
 
-	horizontal_box: EV_HORIZONTAL_BOX
+	horizontal_box: EV_HORIZONTAL_SPLIT_AREA
 
 	check_button: EV_CHECK_BUTTON
+
+	combo_box: EV_COMBO_BOX
+
+	elemento_lista: EV_LIST_ITEM
 
 feature {NONE} -- Implementation Constants
 
@@ -308,13 +333,13 @@ feature {NONE} -- Implementation Constants
 
 	Database_current_weather: TWO_WAY_LIST[ REAL ]
 
-	Window_width: INTEGER = 450
+	Window_width: INTEGER
 
 	Window_height: INTEGER = 730
 
 	Font_size_height: INTEGER = 20
 
-	max_items_shown: INTEGER = 20
+	max_items_shown: INTEGER
 
 	firt_column_x_position: INTEGER = 10
 

@@ -59,7 +59,7 @@ feature {NONE} -- Initialization
 			create check_button7
 
 				-- creo il timer
-			create timer.make_with_interval (1000)
+			create timer.make_with_interval (2000)
 		end
 
 	initialize
@@ -181,13 +181,13 @@ feature {NONE} -- Implementation
 			finestra_dati_meteo.set_position (x_position + window_width + 450, y_position + window_height)
 			finestra_dati_meteo.set_title ("Storico dati corrente")
 
-			finestra_dati_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 300)
+			finestra_dati_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 350)
 			finestra_dati_temperatura.set_title ("Storico temperatura")
 
-			finestra_dati_umidita.set_position (x_position + window_width + 700, y_position + window_height - 300)
+			finestra_dati_umidita.set_position (x_position + window_width + 700, y_position + window_height - 350)
 			finestra_dati_umidita.set_title ("Storico umidita'")
 
-			finestra_dati_pressione.set_position (x_position + window_width + 950, y_position + window_height - 300)
+			finestra_dati_pressione.set_position (x_position + window_width + 950, y_position + window_height - 350)
 			finestra_dati_pressione.set_title ("Storico pressione")
 
 			finestra_grafico_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 300)
