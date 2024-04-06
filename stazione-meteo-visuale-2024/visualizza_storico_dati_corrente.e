@@ -163,8 +163,9 @@ feature
 			end
 		end
 
-	reset_database
+	reset
 		do
+			reset_window
 			Database_weather.wipe_out
 		end
 

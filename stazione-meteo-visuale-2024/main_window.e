@@ -75,8 +75,9 @@ feature {NONE} -- Initialization
 			set_size (Window_width, Window_height)
 			set_position (50,30)
 
-			build_widgets
 			build_windows
+			build_widgets
+
 
 			disable_user_resize
 		ensure then
@@ -135,8 +136,7 @@ feature {NONE} -- Implementation
 				-- Add 'reset' button primitive
 			create reset_button.make_with_text ("Reset")
 			reset_button.select_actions.extend (agent reset_widgets)
-			reset_button.select_actions.extend (agent reset_serie_storica)
-			reset_button.select_actions.extend (agent reset_grafico)
+			reset_button.select_actions.extend (agent reset_finestre)
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
 			enclosing_box.set_item_y_position (reset_button, 90)
@@ -346,22 +346,16 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	reset_serie_storica
+	reset_finestre
 		do
 			finestra_dati_temperatura.reset
 			finestra_dati_umidita.reset
 			finestra_dati_pressione.reset
-		end
-
-
-
-	reset_grafico
-		do
 			finestra_grafico_temperatura.clear
 			finestra_grafico_umidita.clear
 			finestra_grafico_pressione.clear
+			finestra_dati_meteo.reset
 		end
-
 
 feature {NONE} -- Contract checking
 

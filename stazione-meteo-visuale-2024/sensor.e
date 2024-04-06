@@ -34,7 +34,7 @@ feature -- Element change
 
 feature -- Events
 
-	event: EVENT_TYPE [TUPLE [REAL]]
+	event: EVENT_TYPE [TUPLE]
 			-- Event associated with `event'.
 
 invariant
