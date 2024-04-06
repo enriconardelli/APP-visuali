@@ -252,6 +252,7 @@ feature
 			Database_weather.wipe_out
 			enclosing_box.wipe_out
 			make_title
+			make_title_row
 			next_y := 30
 		end
 
@@ -268,7 +269,8 @@ feature
 				make_title_row
 				make_title
 
-				max_items_shown := combo_box.selected_text.to_integer
+
+				max_items_shown := combo_box.selected_item.text.to_integer
 
 				from
 					Database_weather.finish
