@@ -11,9 +11,7 @@ inherit
 
 	SENSOR
 		rename
-			set_value as set_humidity
-		redefine
-			set_humidity
+			new_value as new_value_humidity
 		end
 
 create
@@ -21,16 +19,14 @@ create
 
 feature -- Element change
 
-	set_humidity (a_humidity: REAL)
-			-- Set `a_humidity' to `humidity'.
-			-- Publish the value change of `humidity'.
-		require else
-			positive_humidity: a_humidity >= 0
+	new_value_humidity
+			-- Change value and publish it
+		local
+			reale : REAL_64
 		do
-			value := a_humidity
+			reale := floor(15*(sine(0.25*seed + 2)) + 65)
+			value := reale.truncated_to_real
 			event.publish ([value])
-		ensure then
-			value_set: value = a_humidity
+			seed := seed + 1
 		end
-
 end --class SENSOR_HUMIDITY

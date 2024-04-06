@@ -311,9 +311,9 @@ feature {NONE} -- Implementation
 			umidita :=  50 + Sensor_value_seed + Iteration_count
 			pressione := 720 + Sensor_value_seed + Iteration_count
 
-			sensor_temperature.set_temperature (temperatura )
-			sensor_humidity.set_humidity (umidita)
-			sensor_pressure.set_pressure (pressione)
+			sensor_temperature.new_value_temperature
+			sensor_humidity.new_value_humidity
+			sensor_pressure.new_value_pressure
 
 			finestra_dati_meteo.lock_update
 			finestra_dati_meteo.add_weather_report ([Iteration_count, temperatura, umidita, pressione])

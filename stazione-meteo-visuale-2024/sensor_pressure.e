@@ -11,9 +11,7 @@ inherit
 
 	SENSOR
 		rename
-			set_value as set_pressure
-		redefine
-			set_pressure
+			new_value as new_value_pressure
 		end
 
 create
@@ -21,16 +19,15 @@ create
 
 feature -- Element change
 
-	set_pressure (a_pressure: REAL)
-			-- Set `a_pressure' to `pressure'.
-			-- Publish the value change of `pressure'.
-		require else
-			positive_pressure: a_pressure >= 0
+	new_value_pressure
+			-- Change value and publish it
+		local
+			reale : REAL_64
 		do
-			value := a_pressure
+			reale := floor(50*(sine(0.15*seed + 1.5)) + 1000)
+			value := reale.truncated_to_real
 			event.publish ([value])
-		ensure then
-			value_set: value = a_pressure
+			seed := seed + 1
 		end
 
 end --class SENSOR_PRESSURE

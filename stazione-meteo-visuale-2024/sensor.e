@@ -7,6 +7,9 @@ note
 deferred class
 	SENSOR
 
+inherit
+	DOUBLE_MATH
+
 feature {NONE} -- Initialization
 
 	make
@@ -18,18 +21,14 @@ feature {NONE} -- Initialization
 feature -- Access
 
 	value: REAL
-			-- Container event
+			-- Sensor value
+
+	seed: INTEGER
 
 feature -- Element change
 
-	set_value (a_value: REAL)
-			-- Set `a_value' to `value'.
-			-- Publish the value change of `event'.
-		do
-			value := a_value
-			event.publish ([value])
-		ensure
-			value_set: value = a_value
+	new_value
+		deferred
 		end
 
 feature -- Events

@@ -11,9 +11,7 @@ inherit
 
 	SENSOR
 		rename
-			set_value as set_temperature
-		redefine
-			set_temperature
+			new_value as new_value_temperature
 		end
 
 create
@@ -21,17 +19,15 @@ create
 
 feature -- Element change
 
-	set_temperature (a_temperature: REAL)
-			-- Set `a_temperature' to `temperature'.
-			-- Publish the value change of `temperature'.
-			-- Publish the value change of `temperature'.
-		require else
-			valid_temperature: a_temperature > -100 and a_temperature < 1000
+	new_value_temperature
+			-- Change value and publish it
+		local
+			reale : REAL_64
 		do
-			value := a_temperature
+			reale := floor((15*sine(0.2*seed) + 15)*10)/10
+			value := reale.truncated_to_real
 			event.publish ([value])
-		ensure then
-			value_set: value = a_temperature
+			seed := seed + 1
 		end
 
 end --class SENSOR_TEMPERATURE
