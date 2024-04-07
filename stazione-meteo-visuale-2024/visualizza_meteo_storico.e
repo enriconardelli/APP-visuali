@@ -90,7 +90,6 @@ feature {NONE}-- Initialization
 
 				check_button.select_actions.extend (agent toggle_avanzate)
 				check_button.set_text ("avanzate")
-				combo_box.select_actions.extend (agent refresh)
 			end
 
 feature

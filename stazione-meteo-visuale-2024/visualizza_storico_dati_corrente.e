@@ -8,9 +8,11 @@ class
 	VISUALIZZA_STORICO_DATI_CORRENTE
 
 inherit
-	EV_TITLED_WINDOW
+	FINESTRA_CON_SELEZIONE_NUMERO_DATI
 		redefine
-			initialize
+			create_interface_objects,
+			initialize,
+			build_widgets
 		end
 
 create
@@ -18,25 +20,41 @@ create
 
 feature {NONE}-- Initialization
 
-	initialize
-			-- Build the interface of this window.
+	create_interface_objects
 		do
-			Precursor {EV_TITLED_WINDOW}
-			set_size (Window_width, Window_height)
+			precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+
+			create enclosing_box
+
 			create Database_temperature.make
 			create Database_pressure.make
 			create Database_humidity.make
 			create Database_weather.make
-			build_widgets
+		end
+
+	initialize
+			-- Build the interface of this window.
+		do
 			next_y := 30
 
-			make_top_row
-			disable_user_resize
+			window_width := 600
+			window_height := 730
+			default_items_shown := 5
+
+			set_size (Window_width, Window_height)
+
+			Precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
 
 		ensure then
 			window_size_set: width = Window_width and height = Window_height
 		end
 
+		build_widgets
+				-- Build GUI elements.
+			do
+				precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+				main_box.extend (enclosing_box)
+			end
 
 feature
 
@@ -215,18 +233,6 @@ feature
 			next_y := 30
 		end
 
-
-feature {NONE} -- Implementation GUI
-
-	build_widgets
-			-- Build GUI elements.
-		do
-			create enclosing_box
-			extend (enclosing_box)
-
-		end
-
-
 feature {NONE} -- Implementation widgets
 
 	enclosing_box: EV_FIXED
@@ -242,15 +248,15 @@ feature {NONE} -- Implementation Constants
 
 	Database_weather: TWO_WAY_LIST[ TUPLE ]
 
-	Window_width: INTEGER = 600
+--	Window_width: INTEGER = 600
 
-	Window_height: INTEGER = 700
+--	Window_height: INTEGER = 700
 
 	Font_size_height: INTEGER = 20
 
 	next_y: INTEGER
 
-	max_items_shown: INTEGER = 20
+--	max_items_shown: INTEGER = 20
 
 	internal_font: EV_FONT
 			-- Internal font used by various widgets

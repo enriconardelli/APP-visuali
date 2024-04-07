@@ -6,6 +6,7 @@ note
 
 deferred class
 	FINESTRA_CON_SELEZIONE_NUMERO_DATI
+	
 inherit
 	EV_TITLED_WINDOW
 		redefine
@@ -45,7 +46,7 @@ feature {NONE} -- Initialization
 			from
 				i:= 5
 			until
-				i = 20
+				i = 26
 			loop
 				combo_box.extend (create {EV_LIST_ITEM}.make_with_text (i.out))
 				i := i+1
@@ -56,9 +57,14 @@ feature {NONE} -- Initialization
 					do
 						max_items_shown := combo_box.selected_item.text.to_integer
 					end)
+			combo_box.select_actions.extend (agent refresh)
 		end
 
 	reset
+		deferred
+		end
+
+	refresh
 		deferred
 		end
 
