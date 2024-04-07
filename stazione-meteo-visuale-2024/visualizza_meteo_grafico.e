@@ -73,7 +73,7 @@ feature
 			temp := 1 / ( massimo - minimo )
 
 			from
-				Database_weather.start
+				Database_weather.go_i_th (i)
 			until
 				Database_weather.after
 			loop

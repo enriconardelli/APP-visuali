@@ -29,9 +29,7 @@ create
 feature {NONE} -- Initialization
 
 	create_interface_objects
-		-- <Precursor>
 		do
-
 				-- creo container
 			create vertical_box
 			create enclosing_box
@@ -135,7 +133,7 @@ feature {NONE} -- Implementation
 
 				-- Add 'reset' button primitive
 			create reset_button.make_with_text ("Reset")
-			reset_button.select_actions.extend (agent reset_widgets)
+			reset_button.select_actions.extend (agent reset_actions)
 			reset_button.select_actions.extend (agent reset_finestre)
 			enclosing_box.extend (reset_button)
 			enclosing_box.set_item_x_position (reset_button, 150)
@@ -160,46 +158,7 @@ feature {NONE} -- Implementation
 			statistiche_not_void: statistiche /= Void
 		end
 
-	build_windows
-			-- Create the other windows to be desplayed
-		do
-				-- Set 'meteo_corrente' window
-			meteo_corrente.set_position (x_position + window_width + 10, y_position)
-			meteo_corrente.set_title ("Meteo corrente")
-			meteo_corrente.show
 
-				-- Set 'previsioni_meteo' window
-			previsioni_meteo.set_position (x_position, y_position + window_height + 25)
-			previsioni_meteo.set_title ("Previsioni meteo")
-			previsioni_meteo.show
-
-				-- Set 'statistiche' window
-			statistiche.set_position (x_position + window_width + 10, y_position + window_height + 25)
-			statistiche.set_title ("Statistiche")
-			statistiche.show
-
-			finestra_dati_meteo.set_position (x_position + window_width + 450, y_position + window_height)
-			finestra_dati_meteo.set_title ("Storico dati corrente")
-
-			finestra_dati_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 350)
-			finestra_dati_temperatura.set_title ("Storico temperatura")
-
-			finestra_dati_umidita.set_position (x_position + window_width + 700, y_position + window_height - 350)
-			finestra_dati_umidita.set_title ("Storico umidita'")
-
-			finestra_dati_pressione.set_position (x_position + window_width + 950, y_position + window_height - 350)
-			finestra_dati_pressione.set_title ("Storico pressione")
-
-			finestra_grafico_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 300)
-			finestra_grafico_temperatura.set_title ("Grafico temperatura corrente")
-
-			finestra_grafico_pressione.set_position (x_position + window_width + 550, y_position + window_height - 300)
-			finestra_grafico_pressione.set_title ("Grafico pressione corrente")
-
-			finestra_grafico_umidita.set_position (x_position + window_width + 650, y_position + window_height - 300)
-			finestra_grafico_umidita.set_title ("Grafico umidita' corrente")
-
-		end
 
 	start_actions
 			-- Start the appropriate actions.
@@ -210,7 +169,6 @@ feature {NONE} -- Implementation
 			sensor_temperature.event.wipe_out
 			sensor_humidity.event.wipe_out
 			sensor_pressure.event.wipe_out
-			Iteration_count := 0
 
 			create info_dialog.make_with_text ("Ora inizieranno le misurazioni. Premi 'Pause' per interrompere, 'Reset' per azzerare i contatori, 'Step' per far avanzare le misurazioni di un passo.")
 			info_dialog.show_modal_to_window (Current)
@@ -234,6 +192,9 @@ feature {NONE} -- Implementation
 			sensor_humidity.event.subscribe (agent statistiche.set_humidity(?))
 			sensor_pressure.event.subscribe (agent statistiche.set_pressure(?))
 
+			sensor_temperature.event.subscribe (agent finestra_dati_meteo.add_temperature(?))
+			sensor_humidity.event.subscribe (agent finestra_dati_meteo.add_humidity(?))
+			sensor_pressure.event.subscribe (agent finestra_dati_meteo.add_pressure(?))
 
 			sensor_temperature.event.subscribe (agent finestra_dati_temperatura.add_weather_report(?))
 			sensor_humidity.event.subscribe (agent finestra_dati_umidita.add_weather_report(?))
@@ -276,15 +237,9 @@ feature {NONE} -- Implementation
 		end
 
 
-	reset_widgets
+	reset_actions
 			-- Reset contents of all widgets.
 		do
-				-- Initial conditions for widgets
-			meteo_corrente.reset_widget
-			previsioni_meteo.reset_widget
-			statistiche.reset_widget
-
-			Iteration_count := 0
 			timer.actions.wipe_out
 
 				-- Restore 'start' button to initial conditions
@@ -298,37 +253,16 @@ feature {NONE} -- Implementation
 
 	change_value_once
 			-- Change values of `Sensor' object once.
-		local
-			temperatura: REAL
-			umidita: REAL
-			pressione: REAL
-
-
 		do
-			Iteration_count := Iteration_count + 1
-
-			temperatura := Sensor_value_seed + Iteration_count
-			umidita :=  50 + Sensor_value_seed + Iteration_count
-			pressione := 720 + Sensor_value_seed + Iteration_count
-
 			sensor_temperature.new_value_temperature
 			sensor_humidity.new_value_humidity
 			sensor_pressure.new_value_pressure
 
-			finestra_dati_meteo.lock_update
-			finestra_dati_meteo.add_weather_report ([Iteration_count, temperatura, umidita, pressione])
-			finestra_dati_meteo.reset_window
-			finestra_dati_meteo.fill_window
-			finestra_dati_meteo.unlock_update
-
+			finestra_dati_meteo.refresh
 			finestra_dati_temperatura.refresh
 			finestra_dati_umidita.refresh
 			finestra_dati_pressione.refresh
-
-
-			Application.process_events
 		end
-
 
 	destroy_application
 			-- Destroy the application.
@@ -346,8 +280,63 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	reset_finestre
+feature {NONE} -- Windows management
+
+	build_windows
+			-- Create the other windows to be desplayed
 		do
+				-- Set 'meteo_corrente' window
+			meteo_corrente.set_position (x_position + window_width + 10, y_position)
+			meteo_corrente.set_title ("Meteo corrente")
+			meteo_corrente.show
+
+				-- Set 'previsioni_meteo' window
+			previsioni_meteo.set_position (x_position, y_position + window_height + 25)
+			previsioni_meteo.set_title ("Previsioni meteo")
+			previsioni_meteo.show
+
+				-- Set 'statistiche' window
+			statistiche.set_position (x_position + window_width + 10, y_position + window_height + 25)
+			statistiche.set_title ("Statistiche")
+			statistiche.show
+
+			finestra_dati_meteo.set_position (x_position + window_width + 450, y_position + window_height)
+			finestra_dati_meteo.set_title ("Storico dati corrente")
+
+			finestra_dati_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 350)
+			finestra_dati_temperatura.set_title ("Storico temperatura")
+
+			finestra_dati_umidita.set_position (x_position + window_width + 700, y_position + window_height - 350)
+			finestra_dati_umidita.set_title ("Storico umidita'")
+
+			finestra_dati_pressione.set_position (x_position + window_width + 950, y_position + window_height - 350)
+			finestra_dati_pressione.set_title ("Storico pressione")
+
+			finestra_grafico_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 300)
+			finestra_grafico_temperatura.set_title ("Grafico temperatura corrente")
+
+			finestra_grafico_pressione.set_position (x_position + window_width + 550, y_position + window_height - 300)
+			finestra_grafico_pressione.set_title ("Grafico pressione corrente")
+
+			finestra_grafico_umidita.set_position (x_position + window_width + 650, y_position + window_height - 300)
+			finestra_grafico_umidita.set_title ("Grafico umidita' corrente")
+		end
+
+	mostra_finestra (finestra : EV_TITLED_WINDOW; tasto : EV_CHECK_BUTTON)
+		do
+			if tasto.is_selected  then
+				finestra.show
+			 else
+			 	finestra.hide
+			end
+		end
+
+	reset_finestre
+			-- Reset all window to initial conditions
+		do
+			meteo_corrente.reset_widget
+			previsioni_meteo.reset_widget
+			statistiche.reset_widget
 			finestra_dati_temperatura.reset
 			finestra_dati_umidita.reset
 			finestra_dati_pressione.reset
@@ -356,6 +345,8 @@ feature {NONE} -- Implementation
 			finestra_grafico_pressione.clear
 			finestra_dati_meteo.reset
 		end
+
+
 
 feature {NONE} -- Contract checking
 
@@ -387,9 +378,6 @@ feature {NONE} -- Implementation / widgets
 
 	step_button: EV_BUTTON
 			-- Step button	
-
-	timer: EV_TIMEOUT
-			-- Timer per la pubblicazione di dati
 
 feature {NONE} -- Finestre
 
@@ -425,6 +413,9 @@ feature {NONE} -- Finestre
 
 feature {NONE} -- Implementation / Constants
 
+	timer: EV_TIMEOUT
+			-- Timer per la pubblicazione di dati
+
 	Application: EV_APPLICATION
 			-- Application
 		once
@@ -457,12 +448,6 @@ feature {NONE} -- Implementation / Constants
 			sensor_pressure_created: Result /= Void
 		end
 
-	Sensor_value_seed: INTEGER = 20
-			-- an initial value for sensor values
-
-	Iteration_count: INTEGER
-			-- keeps count of number of iterations
-
 	Window_title: STRING = "Event application: main window"
 			-- Title of the window
 
@@ -471,14 +456,5 @@ feature {NONE} -- Implementation / Constants
 
 	Window_height: INTEGER = 350
 			-- Height of the window
-
-	mostra_finestra (finestra : EV_TITLED_WINDOW; tasto : EV_CHECK_BUTTON)
-		do
-			if tasto.is_selected  then
-				finestra.show
-			 else
-			 	finestra.hide
-			end
-		end
 
 end -- class MAIN_WINDOW

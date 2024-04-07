@@ -23,6 +23,9 @@ feature {NONE}-- Initialization
 		do
 			Precursor {EV_TITLED_WINDOW}
 			set_size (Window_width, Window_height)
+			create Database_temperature.make
+			create Database_pressure.make
+			create Database_humidity.make
 			create Database_weather.make
 			build_widgets
 			next_y := 30
@@ -136,21 +139,52 @@ feature
 
 		end
 
-	add_weather_report (weather_report: TUPLE)
-		require
-			correct_number_of_elements: weather_report.count = 4
-			correct_format: weather_report[1].conforms_to (1.1)
-			correct_temperature_format: weather_report[2].conforms_to (1.1)
-			correct_humidity_format: weather_report[2].conforms_to (1.1)
-			correct_pressure_format: weather_report[2].conforms_to (1.1)
+	add_temperature (a_value: REAL)
 		do
-			Database_weather.extend (weather_report)
+			Database_temperature.extend (a_value)
 		end
 
-	fill_window
+	add_pressure (a_value: REAL)
+		do
+			Database_pressure.extend (a_value)
+		end
+
+	add_humidity (a_value: REAL)
+		do
+			Database_humidity.extend (a_value)
+		end
+
+	make_database_weather
+		local
+			i: INTEGER
+		do
+			Database_weather.wipe_out
+			i := 1
+
+			from
+				Database_temperature.start
+				Database_pressure.start
+				Database_humidity.start
+			until
+				Database_temperature.after or Database_pressure.after or Database_humidity.after
+			loop
+				Database_weather.extend ([i,Database_temperature.item, Database_humidity.item, Database_pressure.item])
+				Database_temperature.forth
+				Database_pressure.forth
+				Database_humidity.forth
+				i := i+1
+			end
+
+		end
+
+	refresh
 		local
 			i: REAL
 		do
+			make_database_weather
+
+			lock_update
+			reset_window
 			from
 				Database_weather.finish
 				i := 1
@@ -161,12 +195,17 @@ feature
 				Database_weather.back
 				i := i+1
 			end
+
+			unlock_update
 		end
 
 	reset
 		do
 			reset_window
 			Database_weather.wipe_out
+			Database_temperature.wipe_out
+			Database_pressure.wipe_out
+			Database_humidity.wipe_out
 		end
 
 	reset_window
@@ -194,6 +233,12 @@ feature {NONE} -- Implementation widgets
 
 
 feature {NONE} -- Implementation Constants
+
+	Database_temperature: TWO_WAY_LIST[ REAL ]
+
+	Database_pressure: TWO_WAY_LIST[ REAL ]
+
+	Database_humidity: TWO_WAY_LIST[ REAL ]
 
 	Database_weather: TWO_WAY_LIST[ TUPLE ]
 

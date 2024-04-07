@@ -81,7 +81,6 @@ feature {NONE}-- Initialization
 				create horizontal_box
 				create check_button.make_with_text("avanzate")
 				create combo_box
-				create elemento_lista.make_with_text ("2")
 
 				extend (vertical_box)
 				vertical_box.extend (enclosing_box)
@@ -104,6 +103,7 @@ feature {NONE}-- Initialization
 				end
 
 				combo_box.select_actions.extend (agent refresh)
+
 			end
 
 feature
@@ -319,7 +319,6 @@ feature {NONE} -- Implementation widgets
 
 	combo_box: EV_COMBO_BOX
 
-	elemento_lista: EV_LIST_ITEM
 
 feature {NONE} -- Implementation Constants
 
