@@ -8,9 +8,11 @@ class
 	VISUALIZZA_METEO_STORICO
 
 inherit
-	EV_TITLED_WINDOW
+	FINESTRA_CON_SELEZIONE_NUMERO_DATI
 		redefine
-			initialize
+			create_interface_objects,
+			initialize,
+			build_widgets
 		end
 create
 	make_with_temperature,
@@ -46,26 +48,31 @@ feature	-- Creation procedures
 
 feature {NONE}-- Initialization
 
-	initialize
-			-- Build the interface of this window.
+	create_interface_objects
 		do
-			Precursor {EV_TITLED_WINDOW}
+			precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+
+			create enclosing_box
+			create check_button
+			create combo_box
 
 			create Database_weather.make
 			create Database_current_weather.make
-			build_widgets
+		end
 
+	initialize
+			-- Build the interface of this window.
+		do
 			next_y := 60
 			avanzato:= FALSE
-			max_items_shown := 20
+
 			window_width := 220
+			window_height := 730
+			default_items_shown := 5
 
 			set_size (Window_width, Window_height)
 
-			make_title_row
-			make_title
-			disable_user_resize
-
+			Precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
 
 		ensure then
 			window_size_set: width = Window_width and height = Window_height
@@ -73,37 +80,17 @@ feature {NONE}-- Initialization
 
 		build_widgets
 				-- Build GUI elements.
-			local
-				i: INTEGER
 			do
-				create vertical_box
-				create enclosing_box
-				create horizontal_box
-				create check_button.make_with_text("avanzate")
-				create combo_box
+				precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
 
-				extend (vertical_box)
-				vertical_box.extend (enclosing_box)
-				vertical_box.extend (horizontal_box)
-				vertical_box.set_split_position (window_height - 30)
-				horizontal_box.extend (combo_box)
-				horizontal_box.extend(check_button)
-				horizontal_box.set_split_position (130)
+				main_box.extend (enclosing_box)
+				main_box.extend(check_button)
+				main_box.set_item_position (check_button, 110, height - 50)
+				main_box.set_item_width (check_button, 100)
+
 				check_button.select_actions.extend (agent toggle_avanzate)
-
-				combo_box.disable_edit
-
-				from
-					i:= 5
-				until
-					i = 20
-				loop
-					combo_box.extend (create {EV_LIST_ITEM}.make_with_text (i.out))
-					i := i+1
-				end
-
+				check_button.set_text ("avanzate")
 				combo_box.select_actions.extend (agent refresh)
-
 			end
 
 feature
@@ -224,7 +211,6 @@ feature
 				enclosing_box.extend (mean_label)
 				enclosing_box.set_item_x_position (mean_label, fourth_column_x_position)
 				enclosing_box.set_item_y_position (mean_label, next_y)
-
 			end
 
 			next_y := next_y + 30
@@ -253,7 +239,6 @@ feature
 			enclosing_box.wipe_out
 			make_title
 			make_title_row
-			next_y := 30
 		end
 
 	refresh
@@ -268,9 +253,6 @@ feature
 
 				make_title_row
 				make_title
-
-
-				max_items_shown := combo_box.selected_item.text.to_integer
 
 				from
 					Database_weather.finish
@@ -295,30 +277,26 @@ feature {NONE} -- Implementation GUI
 		do
 			if check_button.is_selected then
 				avanzato:= TRUE
-				refresh
 				Window_width := 450
 			else
 				avanzato:= FALSE
-				refresh
 				Window_width := 220
 			end
+			refresh
 
+			set_maximum_width (Window_width)
+			set_minimum_width (220)
 			set_size (Window_width, Window_height)
 		end
 
 
 feature {NONE} -- Implementation widgets
 
-	vertical_box: EV_VERTICAL_SPLIT_AREA
-
 	enclosing_box: EV_FIXED
 
 	horizontal_box: EV_HORIZONTAL_SPLIT_AREA
 
 	check_button: EV_CHECK_BUTTON
-
-	combo_box: EV_COMBO_BOX
-
 
 feature {NONE} -- Implementation Constants
 
@@ -334,13 +312,7 @@ feature {NONE} -- Implementation Constants
 
 	Database_current_weather: TWO_WAY_LIST[ REAL ]
 
-	Window_width: INTEGER
-
-	Window_height: INTEGER = 730
-
 	Font_size_height: INTEGER = 20
-
-	max_items_shown: INTEGER
 
 	firt_column_x_position: INTEGER = 10
 
