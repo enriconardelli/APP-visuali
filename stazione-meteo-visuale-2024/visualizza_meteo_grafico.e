@@ -13,6 +13,14 @@ inherit
 			initialize
 		end
 
+	STILE_FINESTRE
+		undefine
+			default_create,
+			copy
+		redefine
+			Font_size_height
+		end
+
 create
 	default_create
 
@@ -171,20 +179,10 @@ feature {NONE} -- Implementation Constants
 
 	Window_height: INTEGER = 300
 
-	Font_size_height: INTEGER = 26
-
-	Number_points : INTEGER = 20
-
-	internal_font: EV_FONT
-			-- Internal font used by various widgets
+	Font_size_height: INTEGER
 		once
-			create Result.make_with_values ({EV_FONT_CONSTANTS}.Family_sans, {EV_FONT_CONSTANTS}.Weight_regular, {EV_FONT_CONSTANTS}.Shape_regular, Font_size_height)
-		ensure
-			internal_font_created: Result /= Void
-			font_family_set_to_family_sans: Result.family = {EV_FONT_CONSTANTS}.Family_sans
-			font_weight_set_to_weight_regular: Result.weight = {EV_FONT_CONSTANTS}.Weight_regular
-			font_shape_set_to_shape_regular: Result.shape = {EV_FONT_CONSTANTS}.Shape_regular
-			font_height_set_to_font_size_height: Result.height = Font_size_height
+			Result := 26
 		end
+	Number_points : INTEGER = 20
 
 end

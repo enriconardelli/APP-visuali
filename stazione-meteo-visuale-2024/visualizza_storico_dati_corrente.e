@@ -14,6 +14,12 @@ inherit
 			initialize,
 			build_widgets
 		end
+		
+	STILE_FINESTRE
+		undefine
+			default_create,
+			copy
+		end
 
 create
 	default_create
@@ -67,7 +73,7 @@ feature
 		do
 			create label
 			label.set_text ("n°")
-			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label.set_foreground_color (Color_text)
 			label.set_font (internal_font)
 
 			enclosing_box.extend (label)
@@ -76,7 +82,7 @@ feature
 
 			create temperature_label
 			temperature_label.set_text ("Temperatura")
-			temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
+			temperature_label.set_foreground_color (Color_temperature)
 			temperature_label.set_font (internal_font)
 
 			enclosing_box.extend (temperature_label)
@@ -85,7 +91,7 @@ feature
 
 			create humidity_label
 			humidity_label.set_text ("Umidita'")
-			humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
+			humidity_label.set_foreground_color (Color_humidity)
 			humidity_label.set_font (internal_font)
 
 			enclosing_box.extend (humidity_label)
@@ -94,7 +100,7 @@ feature
 
 			create pressure_label
 			pressure_label.set_text ("Pressione")
-			pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
+			pressure_label.set_foreground_color (Color_pressure)
 			pressure_label.set_font (internal_font)
 
 			enclosing_box.extend (pressure_label)
@@ -120,7 +126,7 @@ feature
 		do
 			create label
 			label.set_text (weather_report[1].out)
-			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label.set_foreground_color (Color_text)
 			label.set_font (internal_font)
 
 			enclosing_box.extend (label)
@@ -129,7 +135,7 @@ feature
 
 			create temperature_label
 			temperature_label.set_text (weather_report[2].out+ "°")
-			temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
+			temperature_label.set_foreground_color (Color_temperature)
 			temperature_label.set_font (internal_font)
 
 			enclosing_box.extend (temperature_label)
@@ -138,7 +144,7 @@ feature
 
 			create humidity_label
 			humidity_label.set_text (weather_report[3].out+ "%%")
-			humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
+			humidity_label.set_foreground_color (Color_humidity)
 			humidity_label.set_font (internal_font)
 
 			enclosing_box.extend (humidity_label)
@@ -147,7 +153,7 @@ feature
 
 			create pressure_label
 			pressure_label.set_text (weather_report[4].out+ " mb")
-			pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
+			pressure_label.set_foreground_color (Color_pressure)
 			pressure_label.set_font (internal_font)
 
 			enclosing_box.extend (pressure_label)
@@ -248,25 +254,7 @@ feature {NONE} -- Implementation Constants
 
 	Database_weather: TWO_WAY_LIST[ TUPLE ]
 
---	Window_width: INTEGER = 600
-
---	Window_height: INTEGER = 700
-
-	Font_size_height: INTEGER = 20
-
 	next_y: INTEGER
 
---	max_items_shown: INTEGER = 20
 
-	internal_font: EV_FONT
-			-- Internal font used by various widgets
-		once
-			create Result.make_with_values ({EV_FONT_CONSTANTS}.Family_sans, {EV_FONT_CONSTANTS}.Weight_regular, {EV_FONT_CONSTANTS}.Shape_regular, Font_size_height)
-		ensure
-			internal_font_created: Result /= Void
-			font_family_set_to_family_sans: Result.family = {EV_FONT_CONSTANTS}.Family_sans
-			font_weight_set_to_weight_regular: Result.weight = {EV_FONT_CONSTANTS}.Weight_regular
-			font_shape_set_to_shape_regular: Result.shape = {EV_FONT_CONSTANTS}.Shape_regular
-			font_height_set_to_font_size_height: Result.height = Font_size_height
-		end
 end

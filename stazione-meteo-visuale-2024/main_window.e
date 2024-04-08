@@ -23,6 +23,12 @@ inherit
 			copy
 		end
 
+	STILE_FINESTRE
+		undefine
+			default_create,
+			copy
+		end
+
 create
 	default_create
 

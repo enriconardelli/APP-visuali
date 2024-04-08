@@ -14,6 +14,13 @@ inherit
 			initialize,
 			build_widgets
 		end
+		
+	STILE_FINESTRE
+		undefine
+			default_create,
+			copy
+		end
+
 create
 	make_with_temperature,
 	make_with_pressure,
@@ -23,25 +30,25 @@ feature	-- Creation procedures
 
 		make_with_temperature
 			do
-				create color.make_with_8_bit_rgb (255, 0, 0)
+				color := Color_temperature
 				title_string := "Temperatura"
-				unit_of_measurement_string := "°"
+				unit_of_measurement_string := unit_of_measurement_temperature
 				default_create
 			end
 
 		make_with_pressure
 			do
-				create color.make_with_8_bit_rgb (0, 255, 0)
+				color := Color_pressure
 				title_string := "Pressione"
-				unit_of_measurement_string := "mb"
+				unit_of_measurement_string := unit_of_measurement_pressure
 				default_create
 			end
 
 		make_with_humidity
 			do
-				create color.make_with_8_bit_rgb (0, 0, 255)
+				color := Color_humidity
 				title_string := "Umidita'"
-				unit_of_measurement_string := "%%"
+				unit_of_measurement_string := unit_of_measurement_humidity
 				default_create
 			end
 
@@ -122,7 +129,7 @@ feature
 		do
 			create label
 			label.set_text ("n°")
-			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label.set_foreground_color (Color_text)
 			label.set_font (internal_font)
 
 			enclosing_box.extend (label)
@@ -131,7 +138,7 @@ feature
 
 			create label2
 			label2.set_text ("Corrente")
-			label2.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label2.set_foreground_color (Color_text)
 			label2.set_font (internal_font)
 
 			enclosing_box.extend (label2)
@@ -141,7 +148,7 @@ feature
 			if avanzato then
 				create label3
 				label3.set_text ("Prevista")
-				label3.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				label3.set_foreground_color (Color_text)
 				label3.set_font (internal_font)
 
 				enclosing_box.extend (label3)
@@ -150,7 +157,7 @@ feature
 
 				create label4
 				label4.set_text ("Media")
-				label4.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				label4.set_foreground_color (Color_text)
 				label4.set_font (internal_font)
 
 				enclosing_box.extend (label4)
@@ -176,7 +183,7 @@ feature
 		do
 			create label
 			label.set_text (weather_report[1].out)
-			label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+			label.set_foreground_color (Color_text)
 			label.set_font (internal_font)
 
 			enclosing_box.extend (label)
@@ -195,7 +202,7 @@ feature
 			if avanzato then
 				create forecast_label
 				forecast_label.set_text (weather_report[3].out + unit_of_measurement_string)
-				forecast_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				forecast_label.set_foreground_color (Color_text)
 				forecast_label.set_font (internal_font)
 
 				enclosing_box.extend (forecast_label)
@@ -204,7 +211,7 @@ feature
 
 				create mean_label
 				mean_label.set_text (weather_report[4].out + unit_of_measurement_string)
-				mean_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 0))
+				mean_label.set_foreground_color (Color_text)
 				mean_label.set_font (internal_font)
 
 				enclosing_box.extend (mean_label)
@@ -311,8 +318,6 @@ feature {NONE} -- Implementation Constants
 
 	Database_current_weather: TWO_WAY_LIST[ REAL ]
 
-	Font_size_height: INTEGER = 20
-
 	firt_column_x_position: INTEGER = 10
 
 	second_column_x_position: INTEGER = 80
@@ -323,16 +328,4 @@ feature {NONE} -- Implementation Constants
 
 	next_y: INTEGER
 
-
-	internal_font: EV_FONT
-			-- Internal font used by various widgets
-		once
-			create Result.make_with_values ({EV_FONT_CONSTANTS}.Family_sans, {EV_FONT_CONSTANTS}.Weight_regular, {EV_FONT_CONSTANTS}.Shape_regular, Font_size_height)
-		ensure
-			internal_font_created: Result /= Void
-			font_family_set_to_family_sans: Result.family = {EV_FONT_CONSTANTS}.Family_sans
-			font_weight_set_to_weight_regular: Result.weight = {EV_FONT_CONSTANTS}.Weight_regular
-			font_shape_set_to_shape_regular: Result.shape = {EV_FONT_CONSTANTS}.Shape_regular
-			font_height_set_to_font_size_height: Result.height = Font_size_height
-		end
 end

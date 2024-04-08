@@ -42,7 +42,7 @@ feature {NONE} -- Implementation GUI
 
 			enclosing_box.extend (old_temperature_label)
 			enclosing_box.set_item_x_position (old_temperature_label, 10)
-			enclosing_box.set_item_y_position (old_temperature_label, 50)
+			enclosing_box.set_item_y_position (old_temperature_label, 60)
 
 			create old_temperature_value_label
 			old_temperature_value_label.set_text ("-")
@@ -51,7 +51,7 @@ feature {NONE} -- Implementation GUI
 
 			enclosing_box.extend (old_temperature_value_label)
 			enclosing_box.set_item_x_position (old_temperature_value_label, 280)
-			enclosing_box.set_item_y_position (old_temperature_value_label, 50)
+			enclosing_box.set_item_y_position (old_temperature_value_label, 60)
 		end
 
 
@@ -65,7 +65,7 @@ feature {NONE} -- Implementation GUI
 
 			enclosing_box.extend (old_humidity_label)
 			enclosing_box.set_item_x_position (old_humidity_label, 10)
-			enclosing_box.set_item_y_position (old_humidity_label, 150)
+			enclosing_box.set_item_y_position (old_humidity_label, 140)
 
 			create old_humidity_value_label
 			old_humidity_value_label.set_text ("-")
@@ -74,7 +74,7 @@ feature {NONE} -- Implementation GUI
 
 			enclosing_box.extend (old_humidity_value_label)
 			enclosing_box.set_item_x_position (old_humidity_value_label, 280)
-			enclosing_box.set_item_y_position (old_humidity_value_label, 150)
+			enclosing_box.set_item_y_position (old_humidity_value_label, 140)
 		end
 
 	build_pressure_widgets
@@ -87,7 +87,7 @@ feature {NONE} -- Implementation GUI
 
 		enclosing_box.extend (old_pressure_label)
 		enclosing_box.set_item_x_position (old_pressure_label, 10)
-		enclosing_box.set_item_y_position (old_pressure_label, 250)
+		enclosing_box.set_item_y_position (old_pressure_label, 220)
 
 		create old_pressure_value_label
 		old_pressure_value_label.set_text ("-")
@@ -96,7 +96,7 @@ feature {NONE} -- Implementation GUI
 
 		enclosing_box.extend (old_pressure_value_label)
 		enclosing_box.set_item_x_position (old_pressure_value_label, 280)
-		enclosing_box.set_item_y_position (old_pressure_value_label, 250)
+		enclosing_box.set_item_y_position (old_pressure_value_label, 220)
 
 	end
 

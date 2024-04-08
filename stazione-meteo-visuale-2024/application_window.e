@@ -16,6 +16,13 @@ inherit
 			initialize,
 			is_in_default_state
 		end
+	STILE_FINESTRE
+		undefine
+			default_create,
+			copy
+		redefine
+			Font_size_height
+		end
 
 create
 	default_create
@@ -64,7 +71,7 @@ feature {NONE} -- Implementation GUI
 		do
 			create temperature_label
 			temperature_label.set_text ("Temperature:")
-			temperature_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
+			temperature_label.set_foreground_color (Color_temperature)
 			temperature_label.set_font (internal_font)
 
 			enclosing_box.extend (temperature_label)
@@ -73,7 +80,7 @@ feature {NONE} -- Implementation GUI
 
 			create temperature_value_label
 			temperature_value_label.set_text ("-")
-			temperature_value_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (255, 0, 0))
+			temperature_value_label.set_foreground_color (Color_temperature)
 			temperature_value_label.set_font (internal_font)
 
 			enclosing_box.extend (temperature_value_label)
@@ -88,7 +95,7 @@ feature {NONE} -- Implementation GUI
 		do
 			create humidity_label
 			humidity_label.set_text ("Humidity:")
-			humidity_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
+			humidity_label.set_foreground_color (Color_humidity)
 			humidity_label.set_font (internal_font)
 
 			enclosing_box.extend (humidity_label)
@@ -97,7 +104,7 @@ feature {NONE} -- Implementation GUI
 
 			create humidity_value_label
 			humidity_value_label.set_text ("-")
-			humidity_value_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 0, 255))
+			humidity_value_label.set_foreground_color (Color_humidity)
 			humidity_value_label.set_font (internal_font)
 
 			enclosing_box.extend (humidity_value_label)
@@ -112,21 +119,21 @@ feature {NONE} -- Implementation GUI
 		do
 			create pressure_label
 			pressure_label.set_text ("Pressure")
-			pressure_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
+			pressure_label.set_foreground_color (Color_pressure)
 			pressure_label.set_font (internal_font)
 
 			enclosing_box.extend (pressure_label)
 			enclosing_box.set_item_x_position (pressure_label, 10)
-			enclosing_box.set_item_y_position (pressure_label, 200)
+			enclosing_box.set_item_y_position (pressure_label, 180)
 
 			create pressure_value_label
 			pressure_value_label.set_text ("-")
-			pressure_value_label.set_foreground_color (create {EV_COLOR}.make_with_8_bit_rgb (0, 255, 0))
+			pressure_value_label.set_foreground_color (Color_pressure)
 			pressure_value_label.set_font (internal_font)
 
 			enclosing_box.extend (pressure_value_label)
 			enclosing_box.set_item_x_position (pressure_value_label, 280)
-			enclosing_box.set_item_y_position (pressure_value_label, 200)
+			enclosing_box.set_item_y_position (pressure_value_label, 180)
 		end
 
 feature {NONE} -- Contract checking
@@ -165,20 +172,9 @@ feature {NONE} -- Implementation Constants
 
 	Window_height: INTEGER = 300
 
-	Font_size_height: INTEGER = 26
-
-	Dash: STRING = "-"
-
-	internal_font: EV_FONT
-			-- Internal font used by various widgets
+	Font_size_height: INTEGER
 		once
-			create Result.make_with_values ({EV_FONT_CONSTANTS}.Family_sans, {EV_FONT_CONSTANTS}.Weight_regular, {EV_FONT_CONSTANTS}.Shape_regular, Font_size_height)
-		ensure
-			internal_font_created: Result /= Void
-			font_family_set_to_family_sans: Result.family = {EV_FONT_CONSTANTS}.Family_sans
-			font_weight_set_to_weight_regular: Result.weight = {EV_FONT_CONSTANTS}.Weight_regular
-			font_shape_set_to_shape_regular: Result.shape = {EV_FONT_CONSTANTS}.Shape_regular
-			font_height_set_to_font_size_height: Result.height = Font_size_height
+			Result := 26
 		end
 
 end -- class APPLICATION_WINDOW
