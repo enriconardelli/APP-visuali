@@ -112,7 +112,7 @@ feature {NONE} -- Implementation
 			check_button4.set_text ("Finestra storico pressione")
 			check_button5.set_text ("Finestra grafico temperatura corrente")
 			check_button6.set_text ("Finestra grafico umidita' corrente")
-			check_button7.set_text ("Finestra Grafico pressione corrente")
+			check_button7.set_text ("Finestra grafico pressione corrente")
 
 			check_button_list.extend(check_button1)
 			check_button_list.extend(check_button2)
@@ -189,9 +189,9 @@ feature {NONE} -- Implementation
 			sensor_pressure.event.subscribe (agent meteo_corrente.set_pressure(?))
 
 				-- Subscribe to temperature, humidity and pressure in previsioni_meteo
-			sensor_temperature.event.subscribe (agent previsioni_meteo.set_temperature(?))
-			sensor_humidity.event.subscribe (agent previsioni_meteo.set_humidity(?))
-			sensor_pressure.event.subscribe (agent previsioni_meteo.set_pressure(?))
+			sensor_temperature.event.subscribe (agent previsioni_meteo.add_temperature(?))
+			sensor_humidity.event.subscribe (agent previsioni_meteo.add_humidity(?))
+			sensor_pressure.event.subscribe (agent previsioni_meteo.add_pressure(?))
 
 				-- Subscribe to temperature, humidity and pressure in statistiche
 			sensor_temperature.event.subscribe (agent statistiche.set_temperature(?))
