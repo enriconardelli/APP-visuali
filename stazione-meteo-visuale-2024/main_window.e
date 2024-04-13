@@ -184,9 +184,9 @@ feature {NONE} -- Implementation
 			step_button.disable_sensitive
 
 				-- Subscribe to temperature, humidity and pressure in meteo_corrente
-			sensor_temperature.event.subscribe (agent meteo_corrente.set_temperature(?))
-			sensor_humidity.event.subscribe (agent meteo_corrente.set_humidity(?))
-			sensor_pressure.event.subscribe (agent meteo_corrente.set_pressure(?))
+			sensor_temperature.event.subscribe (agent meteo_corrente.add_temperature(?))
+			sensor_humidity.event.subscribe (agent meteo_corrente.add_humidity(?))
+			sensor_pressure.event.subscribe (agent meteo_corrente.add_pressure(?))
 
 				-- Subscribe to temperature, humidity and pressure in previsioni_meteo
 			sensor_temperature.event.subscribe (agent previsioni_meteo.add_temperature(?))
@@ -194,9 +194,9 @@ feature {NONE} -- Implementation
 			sensor_pressure.event.subscribe (agent previsioni_meteo.add_pressure(?))
 
 				-- Subscribe to temperature, humidity and pressure in statistiche
-			sensor_temperature.event.subscribe (agent statistiche.set_temperature(?))
-			sensor_humidity.event.subscribe (agent statistiche.set_humidity(?))
-			sensor_pressure.event.subscribe (agent statistiche.set_pressure(?))
+			sensor_temperature.event.subscribe (agent statistiche.add_temperature(?))
+			sensor_humidity.event.subscribe (agent statistiche.add_humidity(?))
+			sensor_pressure.event.subscribe (agent statistiche.add_pressure(?))
 
 			sensor_temperature.event.subscribe (agent finestra_dati_meteo.add_temperature(?))
 			sensor_humidity.event.subscribe (agent finestra_dati_meteo.add_humidity(?))
@@ -264,6 +264,9 @@ feature {NONE} -- Implementation
 			sensor_humidity.new_value_humidity
 			sensor_pressure.new_value_pressure
 
+			previsioni_meteo.refresh
+			meteo_corrente.refresh
+			statistiche.refresh
 			finestra_dati_meteo.refresh
 			finestra_dati_temperatura.refresh
 			finestra_dati_umidita.refresh
@@ -387,13 +390,13 @@ feature {NONE} -- Implementation / widgets
 
 feature {NONE} -- Finestre
 
-	meteo_corrente: VISUALIZZA_METEO_CORRENTE
+	meteo_corrente: FINESTRA_CORRENTE
 			-- Application window 1
 
-	previsioni_meteo: VISUALIZZA_METEO_PREVISIONE
+	previsioni_meteo: FINESTRA_PREVISIONE
 			-- Application window 2
 
-	statistiche: VISUALIZZA_METEO_STATISTICHE
+	statistiche: FINESTRA_STATISTICHE
 			-- Application window 3
 
 	finestra_dati_temperatura: VISUALIZZA_METEO_STORICO

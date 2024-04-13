@@ -14,7 +14,7 @@ inherit
 			initialize,
 			build_widgets
 		end
-		
+
 	STILE_FINESTRE
 		undefine
 			default_create,
@@ -134,7 +134,7 @@ feature
 			enclosing_box.set_item_y_position (label, next_y)
 
 			create temperature_label
-			temperature_label.set_text (weather_report[2].out+ "°")
+			temperature_label.set_text (weather_report[2].out + unit_of_measurement_temperature)
 			temperature_label.set_foreground_color (Color_temperature)
 			temperature_label.set_font (internal_font)
 
@@ -143,7 +143,7 @@ feature
 			enclosing_box.set_item_y_position (temperature_label, next_y)
 
 			create humidity_label
-			humidity_label.set_text (weather_report[3].out+ "%%")
+			humidity_label.set_text (weather_report[3].out + unit_of_measurement_humidity)
 			humidity_label.set_foreground_color (Color_humidity)
 			humidity_label.set_font (internal_font)
 
@@ -152,7 +152,7 @@ feature
 			enclosing_box.set_item_y_position (humidity_label, next_y)
 
 			create pressure_label
-			pressure_label.set_text (weather_report[4].out+ " mb")
+			pressure_label.set_text (weather_report[4].out + unit_of_measurement_pressure)
 			pressure_label.set_foreground_color (Color_pressure)
 			pressure_label.set_font (internal_font)
 

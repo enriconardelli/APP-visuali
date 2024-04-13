@@ -7,15 +7,17 @@ note
 	author: "Volkan Arslan"
 	institute: "Chair of Software Engineering, ETH Zurich, Switzerland"
 
-class
-	APPLICATION_WINDOW
+deferred class
+	FINESTRA_SEMPLICE
 
 inherit
 	EV_TITLED_WINDOW
 		redefine
+			create_interface_objects,
 			initialize,
 			is_in_default_state
 		end
+
 	STILE_FINESTRE
 		undefine
 			default_create,
@@ -24,10 +26,12 @@ inherit
 			Font_size_height
 		end
 
-create
-	default_create
-
 feature {NONE}-- Initialization
+
+	create_interface_objects
+		do
+			create enclosing_box
+		end
 
 	initialize
 			-- Build the interface of this window.
@@ -52,12 +56,30 @@ feature -- Display update
 			labels_resetted: temperature_value_label.text.is_equal (Dash) and humidity_value_label.text.is_equal (Dash) and pressure_value_label.text.is_equal (Dash)
 		end
 
+	display_temperature
+		deferred
+		end
+
+	display_humidity
+		deferred
+		end
+
+	display_pressure
+		deferred
+		end
+
+	refresh
+		do
+			display_temperature
+			display_humidity
+			display_pressure
+		end
+
 feature {NONE} -- Implementation GUI
 
 	build_widgets
 			-- Build GUI elements.
 		do
-			create enclosing_box
 			extend (enclosing_box)
 			build_temperature_widgets
 			build_humidity_widgets
