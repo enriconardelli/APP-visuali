@@ -5,7 +5,7 @@ note
 	revision: "$Revision$"
 
 class
-	VISUALIZZA_METEO_GRAFICO
+	FINESTRA_GRAFICO
 
 inherit
 	EV_TITLED_WINDOW

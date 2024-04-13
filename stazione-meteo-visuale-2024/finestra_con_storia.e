@@ -5,13 +5,20 @@ note
 	revision: "$Revision$"
 
 deferred class
-	FINESTRA_CON_SELEZIONE_NUMERO_DATI
-	
+	FINESTRA_CON_STORIA
+
 inherit
 	EV_TITLED_WINDOW
 		redefine
 			create_interface_objects,
 			initialize
+		end
+
+	STORIA
+		undefine
+			reset,
+			default_create,
+			copy
 		end
 
 feature {NONE} -- Initialization

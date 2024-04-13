@@ -5,10 +5,10 @@ note
 	revision: "$Revision$"
 
 class
-	VISUALIZZA_STORICO_DATI_CORRENTE
+	FINESTRA_STORICO_CORRENTE_COMPLETO
 
 inherit
-	FINESTRA_CON_SELEZIONE_NUMERO_DATI
+	FINESTRA_CON_STORIA
 		redefine
 			create_interface_objects,
 			initialize,
@@ -28,14 +28,12 @@ feature {NONE}-- Initialization
 
 	create_interface_objects
 		do
-			precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
-
+			precursor {FINESTRA_CON_STORIA}
 			create enclosing_box
-
+			create Database_weather.make
 			create Database_temperature.make
 			create Database_pressure.make
 			create Database_humidity.make
-			create Database_weather.make
 		end
 
 	initialize
@@ -49,7 +47,7 @@ feature {NONE}-- Initialization
 
 			set_size (Window_width, Window_height)
 
-			Precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+			Precursor {FINESTRA_CON_STORIA}
 
 		ensure then
 			window_size_set: width = Window_width and height = Window_height
@@ -58,7 +56,7 @@ feature {NONE}-- Initialization
 		build_widgets
 				-- Build GUI elements.
 			do
-				precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+				precursor {FINESTRA_CON_STORIA}
 				main_box.extend (enclosing_box)
 			end
 
@@ -163,20 +161,20 @@ feature
 
 		end
 
-	add_temperature (a_value: REAL)
-		do
-			Database_temperature.extend (a_value)
-		end
+--	add_temperature (a_value: REAL)
+--		do
+--			Database_temperature.extend (a_value)
+--		end
 
-	add_pressure (a_value: REAL)
-		do
-			Database_pressure.extend (a_value)
-		end
+--	add_pressure (a_value: REAL)
+--		do
+--			Database_pressure.extend (a_value)
+--		end
 
-	add_humidity (a_value: REAL)
-		do
-			Database_humidity.extend (a_value)
-		end
+--	add_humidity (a_value: REAL)
+--		do
+--			Database_humidity.extend (a_value)
+--		end
 
 	make_database_weather
 		local
@@ -225,11 +223,11 @@ feature
 
 	reset
 		do
-			reset_window
-			Database_weather.wipe_out
 			Database_temperature.wipe_out
 			Database_pressure.wipe_out
-			Database_humidity.wipe_out
+			Database_pressure.wipe_out
+			reset_window
+			Database_weather.wipe_out
 		end
 
 	reset_window
@@ -246,11 +244,11 @@ feature {NONE} -- Implementation widgets
 
 feature {NONE} -- Implementation Constants
 
-	Database_temperature: TWO_WAY_LIST[ REAL ]
+--	Database_temperature: TWO_WAY_LIST[ REAL ]
 
-	Database_pressure: TWO_WAY_LIST[ REAL ]
+--	Database_pressure: TWO_WAY_LIST[ REAL ]
 
-	Database_humidity: TWO_WAY_LIST[ REAL ]
+--	Database_humidity: TWO_WAY_LIST[ REAL ]
 
 	Database_weather: TWO_WAY_LIST[ TUPLE ]
 

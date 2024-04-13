@@ -5,10 +5,10 @@ note
 	revision: "$Revision$"
 
 class
-	VISUALIZZA_METEO_STORICO
+	FINESTRA_STORICO_SINGOLO
 
 inherit
-	FINESTRA_CON_SELEZIONE_NUMERO_DATI
+	FINESTRA_CON_STORIA
 		redefine
 			create_interface_objects,
 			initialize,
@@ -57,7 +57,7 @@ feature {NONE}-- Initialization
 
 	create_interface_objects
 		do
-			precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+			precursor {FINESTRA_CON_STORIA}
 
 			create enclosing_box
 			create check_button
@@ -79,7 +79,7 @@ feature {NONE}-- Initialization
 
 			set_size (Window_width, Window_height)
 
-			Precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+			Precursor {FINESTRA_CON_STORIA}
 
 		ensure then
 			window_size_set: width = Window_width and height = Window_height
@@ -88,7 +88,7 @@ feature {NONE}-- Initialization
 		build_widgets
 				-- Build GUI elements.
 			do
-				precursor {FINESTRA_CON_SELEZIONE_NUMERO_DATI}
+				precursor {FINESTRA_CON_STORIA}
 
 				main_box.extend (enclosing_box)
 				main_box.extend(check_button)

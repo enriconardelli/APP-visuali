@@ -402,25 +402,25 @@ feature {NONE} -- Finestre
 	statistiche: FINESTRA_STATISTICHE
 			-- Application window 3
 
-	finestra_dati_temperatura: VISUALIZZA_METEO_STORICO
+	finestra_dati_temperatura: FINESTRA_STORICO_SINGOLO
 			-- Application window 4
 
-	finestra_dati_umidita: VISUALIZZA_METEO_STORICO
+	finestra_dati_umidita: FINESTRA_STORICO_SINGOLO
 			-- Application window 5
 
-	finestra_dati_pressione: VISUALIZZA_METEO_STORICO
+	finestra_dati_pressione: FINESTRA_STORICO_SINGOLO
 			-- Application window 6
 
-	finestra_dati_meteo: VISUALIZZA_STORICO_DATI_CORRENTE
+	finestra_dati_meteo: FINESTRA_STORICO_CORRENTE_COMPLETO
 			-- Application window 7
 
-	finestra_grafico_temperatura: VISUALIZZA_METEO_GRAFICO
+	finestra_grafico_temperatura: FINESTRA_GRAFICO
 			-- Application window 8
 
-	finestra_grafico_pressione: VISUALIZZA_METEO_GRAFICO
+	finestra_grafico_pressione: FINESTRA_GRAFICO
 			-- Application window 9
 
-	finestra_grafico_umidita: VISUALIZZA_METEO_GRAFICO
+	finestra_grafico_umidita: FINESTRA_GRAFICO
 			-- Application window 10
 
 feature {NONE} -- Implementation / Constants
