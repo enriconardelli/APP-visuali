@@ -346,6 +346,9 @@ feature {NONE} -- Windows management
 			meteo_corrente.reset_widget
 			previsioni_meteo.reset_widget
 			statistiche.reset_widget
+			meteo_corrente.reset
+			previsioni_meteo.reset
+			statistiche.reset
 			finestra_dati_temperatura.reset
 			finestra_dati_umidita.reset
 			finestra_dati_pressione.reset

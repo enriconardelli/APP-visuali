@@ -24,7 +24,14 @@ feature -- Gestione liste
 			Database_humidity.extend (a_value)
 		end
 
-feature {NONE} --
+	reset
+		do
+			Database_temperature.wipe_out
+			Database_pressure.wipe_out
+			Database_pressure.wipe_out
+		end
+
+feature {NONE} -- Definizione database
 
 	Database_temperature: TWO_WAY_LIST[ REAL ]
 
