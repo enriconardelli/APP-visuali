@@ -7,13 +7,12 @@ note
 deferred class
 	FUNZ_PREVISIONE
 
-inherit
-	STORIA
-
 feature -- Implementazione funzione per una previsione
 
 	previsione (a_database: TWO_WAY_LIST[ REAL ] ): REAL
 			-- fa la previsione del valore futuro sulla base della retta ai minimi quadrati degli ultimi 'Prevision_number' valori
+		require
+			not a_database.is_empty
 		local
 			mediax: REAL
 			mediay: REAL

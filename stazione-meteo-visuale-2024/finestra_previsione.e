@@ -8,6 +8,12 @@ class
 	FINESTRA_PREVISIONE
 
 inherit
+	STORIA
+		undefine
+			copy,
+			default_create
+		end
+
 	FUNZ_PREVISIONE
 		undefine
 			copy,

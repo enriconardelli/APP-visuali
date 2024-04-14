@@ -8,6 +8,12 @@ class
 	FINESTRA_STATISTICHE
 
 inherit
+	STORIA
+		undefine
+			copy,
+			default_create
+		end
+
 	FUNZ_STATISTICHE
 		undefine
 			copy,

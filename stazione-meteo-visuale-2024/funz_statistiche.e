@@ -7,8 +7,6 @@ note
 deferred class
 	FUNZ_STATISTICHE
 
-inherit
-	STORIA
 feature -- Implementazione funzione per una statistica
 
 	media (a_database: TWO_WAY_LIST[ REAL ] ): REAL
