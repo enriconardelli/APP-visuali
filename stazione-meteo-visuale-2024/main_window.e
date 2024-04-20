@@ -42,9 +42,9 @@ feature {NONE} -- Initialization
 			create check_button_list
 
 				-- creo oggetti finestre
-			create previsioni_meteo
-			create statistiche
-			create meteo_corrente
+			create finestra_previsioni
+			create finestra_statistiche
+			create finestra_meteo_corrente
 			create finestra_dati_temperatura.make_with_temperature
 			create finestra_dati_pressione.make_with_pressure
 			create finestra_dati_umidita.make_with_humidity
@@ -82,7 +82,6 @@ feature {NONE} -- Initialization
 			build_windows
 			build_widgets
 
-
 			disable_user_resize
 		ensure then
 			window_title_set: title.is_equal (Window_title)
@@ -106,6 +105,7 @@ feature {NONE} -- Implementation
 			extend (vertical_box)
 			vertical_box.extend (check_button_list)
 
+				-- Set checkbox
 			check_button1.set_text ("Finestra storico dati corrente")
 			check_button2.set_text ("Finestra storico temperatura")
 			check_button3.set_text ("Finestra storico umidita'")
@@ -159,12 +159,10 @@ feature {NONE} -- Implementation
 			enclosing_box_created: enclosing_box /= void
 			start_button_created: start_button /= void
 			reset_button_created: reset_button /= void
-			meteo_corrente_not_void: meteo_corrente /= Void
-			previsioni_meteo_not_void: previsioni_meteo /= Void
-			statistiche_not_void: statistiche /= Void
+			meteo_corrente_not_void: finestra_meteo_corrente /= Void
+			previsioni_meteo_not_void: finestra_previsioni /= Void
+			statistiche_not_void: finestra_statistiche /= Void
 		end
-
-
 
 	start_actions
 			-- Start the appropriate actions.
@@ -183,36 +181,38 @@ feature {NONE} -- Implementation
 			step_button.show
 			step_button.disable_sensitive
 
-				-- Subscribe to temperature, humidity and pressure in meteo_corrente
-			sensor_temperature.event.subscribe (agent meteo_corrente.add_temperature(?))
-			sensor_humidity.event.subscribe (agent meteo_corrente.add_humidity(?))
-			sensor_pressure.event.subscribe (agent meteo_corrente.add_pressure(?))
+				-- Subscribe to temperature, humidity and pressure in finestra_meteo_corrente
+			sensor_temperature.event.subscribe (agent finestra_meteo_corrente.add_temperature(?))
+			sensor_humidity.event.subscribe (agent finestra_meteo_corrente.add_humidity(?))
+			sensor_pressure.event.subscribe (agent finestra_meteo_corrente.add_pressure(?))
 
-				-- Subscribe to temperature, humidity and pressure in previsioni_meteo
-			sensor_temperature.event.subscribe (agent previsioni_meteo.add_temperature(?))
-			sensor_humidity.event.subscribe (agent previsioni_meteo.add_humidity(?))
-			sensor_pressure.event.subscribe (agent previsioni_meteo.add_pressure(?))
+				-- Subscribe to temperature, humidity and pressure in finestra_previsioni
+			sensor_temperature.event.subscribe (agent finestra_previsioni.add_temperature(?))
+			sensor_humidity.event.subscribe (agent finestra_previsioni.add_humidity(?))
+			sensor_pressure.event.subscribe (agent finestra_previsioni.add_pressure(?))
 
-				-- Subscribe to temperature, humidity and pressure in statistiche
-			sensor_temperature.event.subscribe (agent statistiche.add_temperature(?))
-			sensor_humidity.event.subscribe (agent statistiche.add_humidity(?))
-			sensor_pressure.event.subscribe (agent statistiche.add_pressure(?))
+				-- Subscribe to temperature, humidity and pressure in finestra_statistiche
+			sensor_temperature.event.subscribe (agent finestra_statistiche.add_temperature(?))
+			sensor_humidity.event.subscribe (agent finestra_statistiche.add_humidity(?))
+			sensor_pressure.event.subscribe (agent finestra_statistiche.add_pressure(?))
 
+				-- Subscribe to temperature, humidity and pressure in finestra_dati_meteo
 			sensor_temperature.event.subscribe (agent finestra_dati_meteo.add_temperature(?))
 			sensor_humidity.event.subscribe (agent finestra_dati_meteo.add_humidity(?))
 			sensor_pressure.event.subscribe (agent finestra_dati_meteo.add_pressure(?))
 
+				-- Subscribe to temperature, humidity and pressure melle finestre del meteo
 			sensor_temperature.event.subscribe (agent finestra_dati_temperatura.add_weather_report(?))
 			sensor_humidity.event.subscribe (agent finestra_dati_umidita.add_weather_report(?))
 			sensor_pressure.event.subscribe (agent finestra_dati_pressione.add_weather_report(?))
 
+				-- Subscribe to temperature, humidity and pressure nelle finestre dei grafici
 			sensor_temperature.event.subscribe (agent finestra_grafico_temperatura.add_weather_report(?))
 			sensor_pressure.event.subscribe (agent finestra_grafico_pressione.add_weather_report(?))
 			sensor_humidity.event.subscribe (agent finestra_grafico_umidita.add_weather_report(?))
 
 			continue_actions
 		end
-
 
 	pause_actions
 			-- Stop the appropriate actions.
@@ -228,7 +228,6 @@ feature {NONE} -- Implementation
 			step_button.enable_sensitive
 		end
 
-
 	continue_actions
 		do
 				-- Add action to the timer
@@ -241,7 +240,6 @@ feature {NONE} -- Implementation
 
 			step_button.disable_sensitive
 		end
-
 
 	reset_actions
 			-- Reset contents of all widgets.
@@ -260,13 +258,15 @@ feature {NONE} -- Implementation
 	change_value_once
 			-- Change values of `Sensor' object once.
 		do
+				-- Genero il valore successivo nei sensori
 			sensor_temperature.new_value_temperature
 			sensor_humidity.new_value_humidity
 			sensor_pressure.new_value_pressure
 
-			previsioni_meteo.refresh
-			meteo_corrente.refresh
-			statistiche.refresh
+				-- Aggiorno le finestre
+			finestra_previsioni.refresh
+			finestra_meteo_corrente.refresh
+			finestra_statistiche.refresh
 			finestra_dati_meteo.refresh
 			finestra_dati_temperatura.refresh
 			finestra_dati_umidita.refresh
@@ -282,9 +282,9 @@ feature {NONE} -- Implementation
 			question_dialog.show_modal_to_window (Current)
 			if question_dialog.selected_button ~ (create {EV_DIALOG_CONSTANTS}).ev_ok then
 				destroy
-				meteo_corrente.destroy
-				previsioni_meteo.destroy
-				statistiche.destroy
+				finestra_meteo_corrente.destroy
+				finestra_previsioni.destroy
+				finestra_statistiche.destroy
 				Application.destroy
 			end
 		end
@@ -294,44 +294,52 @@ feature {NONE} -- Windows management
 	build_windows
 			-- Create the other windows to be desplayed
 		do
-				-- Set 'meteo_corrente' window
-			meteo_corrente.set_position (x_position + window_width + 10, y_position)
-			meteo_corrente.set_title ("Meteo corrente")
-			meteo_corrente.show
+				-- Set 'finestra_meteo_corrente' window and show it
+			finestra_meteo_corrente.set_position (x_position + window_width + 10, y_position)
+			finestra_meteo_corrente.set_title ("Meteo corrente")
+			finestra_meteo_corrente.show
 
-				-- Set 'previsioni_meteo' window
-			previsioni_meteo.set_position (x_position, y_position + window_height + 25)
-			previsioni_meteo.set_title ("Previsioni meteo")
-			previsioni_meteo.show
+				-- Set 'finestra_previsioni' window and show it
+			finestra_previsioni.set_position (x_position, y_position + window_height + 25)
+			finestra_previsioni.set_title ("Previsioni meteo")
+			finestra_previsioni.show
 
-				-- Set 'statistiche' window
-			statistiche.set_position (x_position + window_width + 10, y_position + window_height + 25)
-			statistiche.set_title ("Statistiche")
-			statistiche.show
+				-- Set 'finestra_statistiche' window and show it
+			finestra_statistiche.set_position (x_position + window_width + 10, y_position + window_height + 25)
+			finestra_statistiche.set_title ("Statistiche")
+			finestra_statistiche.show
 
+				-- Set 'finestra_dati_meteo' window
 			finestra_dati_meteo.set_position (x_position + window_width + 450, y_position + window_height)
 			finestra_dati_meteo.set_title ("Storico dati corrente")
 
+				-- Set 'finestra_dati_temperatura' window
 			finestra_dati_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 350)
 			finestra_dati_temperatura.set_title ("Storico temperatura")
 
+				-- Set 'finestra_dati_umidita' window
 			finestra_dati_umidita.set_position (x_position + window_width + 700, y_position + window_height - 350)
 			finestra_dati_umidita.set_title ("Storico umidita'")
 
+				-- Set 'finestra_dati_pressione' window
 			finestra_dati_pressione.set_position (x_position + window_width + 950, y_position + window_height - 350)
 			finestra_dati_pressione.set_title ("Storico pressione")
 
+				-- Set 'finestra_grafico_temperatura' window
 			finestra_grafico_temperatura.set_position (x_position + window_width + 450, y_position + window_height - 300)
 			finestra_grafico_temperatura.set_title ("Grafico temperatura corrente")
 
+				-- Set 'finestra_grafico_pressione' window
 			finestra_grafico_pressione.set_position (x_position + window_width + 550, y_position + window_height - 300)
 			finestra_grafico_pressione.set_title ("Grafico pressione corrente")
 
+				-- Set 'finestra_grafico_umidita' window
 			finestra_grafico_umidita.set_position (x_position + window_width + 650, y_position + window_height - 300)
 			finestra_grafico_umidita.set_title ("Grafico umidita' corrente")
 		end
 
 	mostra_finestra (finestra : EV_TITLED_WINDOW; tasto : EV_CHECK_BUTTON)
+			-- Mostra la 'finestra' se 'tasto' è selezionato
 		do
 			if tasto.is_selected  then
 				finestra.show
@@ -343,22 +351,21 @@ feature {NONE} -- Windows management
 	reset_finestre
 			-- Reset all window to initial conditions
 		do
-			meteo_corrente.reset_widget
-			previsioni_meteo.reset_widget
-			statistiche.reset_widget
-			meteo_corrente.reset
-			previsioni_meteo.reset
-			statistiche.reset
+			finestra_meteo_corrente.reset_widget
+			finestra_previsioni.reset_widget
+			finestra_statistiche.reset_widget
+
+			finestra_meteo_corrente.reset
+			finestra_previsioni.reset
+			finestra_statistiche.reset
 			finestra_dati_temperatura.reset
 			finestra_dati_umidita.reset
 			finestra_dati_pressione.reset
+			finestra_dati_meteo.reset
 			finestra_grafico_temperatura.clear
 			finestra_grafico_umidita.clear
 			finestra_grafico_pressione.clear
-			finestra_dati_meteo.reset
 		end
-
-
 
 feature {NONE} -- Contract checking
 
@@ -374,10 +381,8 @@ feature {NONE} -- Implementation / widgets
 	check_button1, check_button2, check_button3, check_button4, check_button5, check_button6, check_button7: EV_CHECK_BUTTON
 
 	vertical_box: EV_VERTICAL_SPLIT_AREA
-			--
 
 	check_button_list: EV_VERTICAL_BOX
-			--
 
 	enclosing_box: EV_FIXED
 			-- Invisible Primitives Container
@@ -393,13 +398,13 @@ feature {NONE} -- Implementation / widgets
 
 feature {NONE} -- Finestre
 
-	meteo_corrente: FINESTRA_CORRENTE
+	finestra_meteo_corrente: FINESTRA_CORRENTE
 			-- Application window 1
 
-	previsioni_meteo: FINESTRA_PREVISIONE
+	finestra_previsioni: FINESTRA_PREVISIONE
 			-- Application window 2
 
-	statistiche: FINESTRA_STATISTICHE
+	finestra_statistiche: FINESTRA_STATISTICHE
 			-- Application window 3
 
 	finestra_dati_temperatura: FINESTRA_STORICO_SINGOLO
