@@ -1,0 +1,12 @@
+Questo file descrive la struttura delle classi di questo pregetto.
+START è la classe iniziale il suo compito è di lanciare EV_APPLICATION e mostrare la prima finestra MAIN_WINDOW.
+MAIN_WINDOW è la prima finestra mostrata. È composta da tre bottoni e una lista di check button che abilitano la visualizzazione di tutte le altre finestre (esse vengono instanziate in MAIN_WINDOW). I tre bottoni sono start/pause/continue, step e reset. Start/pause/continue inizia la misurazione dei dati creando instanze dei sensori che pubblicano i dati per tutte le finestre ogni x secondi specificato da un timer. Step fa avanzare le misurazioni di 1. Reset riporta tutti i dati e le finestre alle condizioni iniziali.
+SENSOR è una classe deferred da cui ereditano SENSOR_TEMPERATURE, SENSOR_PRESSURE,SENOR_HUMIDITY. Queste classi hanno il compito di calcolare e pubblicare nuovi valori della temperatura, pressione, umidità.
+STILE_FINESTRE è una classe che definisce lo stile (font, colori, unità di misura) delle finestre. Quindi tutte le finestre ereditano da STILE_FINESTRE.
+FINESTRA_SEMPLECE è una classe deferred che definisce le proprietà grafiche primcipali delle finestre che mostrano pochi dati. Quindi FINESTRA_CORRENTE, FINESTRA_PREVISIONE, FINESTRA_STATISTICHE ereditano da FINESTRA_SEMPLICE e anche da STORIA per le proprietà applicative.
+STORIA è una classe deferred che ha database (TWO_WAY_LIST[ REAL ]) della temperatura, della pressione e dell'umidità e funzioni per aggiornarli o cancellarli.
+FINESTRA_CON_STORIA è una classe deferred che eredita da STORIA e definisce gli aspetti grafici comuni alle classi FINESTRA_STORICO_SINGOLO e FINESTRA_STORICO_CORRENTE_COMPLETO cioè un menu a discesa che permette di selezionare il numero di dati visualizzati nello storico.
+FUNZ_PREVISIONE è la classe in cui viene definita la funzione matematica che prevede il prossimo dato del meteo sulla base della retta ai minimi quadrati degli ultimi 'Prevision_number' valori. FINESTRA_PREVIONE e FINESTRA_STORICO_SINGOLO usano questa funzione.
+FUNZ_STATISTICHE è la classe in cui viene definita la funzione matematica che calcola la media degli ultimi 'mean_number' valori. FINESTRA_STATISTICHE e FINESTRA_STORICO_SINGOLO usano questa funzione.
+FINESTRA_GRAFICO è una classe che dovrebbe ereditare da FINESTRA_CON_STORIA per usarne le funzionalità di scelta dei dati da visualizzare ma non sono riuscito a farlo per problemi con l'ambiente grafico di EV2.
+  
